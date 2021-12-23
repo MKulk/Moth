@@ -24,13 +24,13 @@ LongRangeExchange={
             "FeCr1-FeCr2"  :-0.0018
             }
 
-Hmin=-0.05
+Hmin=-0.07#5
 Hmax=0.01
-Hsteps=12
+Hsteps=32
 
 Tmin=1
 Tmax=300
-Tsteps=1
+Tsteps=32
 
 from CalculationClass import simulation, timeit
 from viewer import reader
@@ -44,7 +44,7 @@ def f():
                 StructureExchange=MaterialExchange,
                 NumberOfIterationM=40,
                 NumberOfIterationTheta=1,
-                NumberOfSteps=600)
+                NumberOfSteps=1200)
 
     S.mode(Debug=False)
     file=S.GetMHvsT(

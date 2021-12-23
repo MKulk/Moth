@@ -58,7 +58,7 @@ class multilayer:
     def InitCalculation(self,NumberOfIterationM=5,NumberOfIterationTheta=100,NumberOfSteps=500,DescendingCoefficient=4):
         self.B          =   self.TranslateConstant(1)
         self.CHI        =   self.TranslateConstant(0.75)
-        self.ThetaM     =   self.TranslateConstant(80)#360*(0.5-np.random.rand(self.B.size))#
+        self.ThetaM     =   self.TranslateConstant(90)#360*(0.5-np.random.rand(self.B.size))#
         #self.ThetaM     =   self.InitPosition[:]
         self.NumberOfIterationM = NumberOfIterationM
         self.NumberOfIterationTheta = NumberOfIterationTheta
@@ -258,8 +258,13 @@ class multilayer:
             dtheta=self.ThetaM-Told
             Told=np.copy(self.ThetaM)
             cheatMask=self.B>1e-3
-            if i>10 and np.all(np.abs(dtheta)<1):
-                self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+0.87*dtheta[cheatMask] # 0,87 magic number do not touch!!!
+            if i>5 and np.any(np.abs(dtheta)>1e-2):
+                cheatMaskM=self.B>1e-3
+                cheatMaskT1=np.abs(dtheta)>1e-2
+                cheatMaskT2=np.abs(dtheta)<=0.2
+                k=0.87*(1+0.07*cheatMaskT2)
+                self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k[cheatMask]*dtheta[cheatMask] # 0,87 magic number do not touch!!!
+            print(i, self.ThetaM[2], self.ThetaM[-2])
         self.NormalizeThetaM()
         self.IterateMagnetisation()
         s1="System simulation for "
@@ -346,7 +351,7 @@ class multilayer:
         return result
 
     def TranslateConstant(self,const):
-        return np.full(self.MaterialName.shape,const,dtype=np.longdouble)
+        return np.full(self.MaterialName.shape,const,dtype=np.double)
 
     def DefineExchange(self):
         #define i-1 element

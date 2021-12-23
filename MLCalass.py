@@ -264,7 +264,7 @@ class multilayer:
                 cheatMaskT2=np.abs(dtheta)<=0.2
                 k=0.87*(1+0.07*cheatMaskT2)
                 self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k[cheatMask]*dtheta[cheatMask] # 0,87 magic number do not touch!!!
-            print(i, self.ThetaM[2], self.ThetaM[-2])
+            #print(i, self.ThetaM[2], self.ThetaM[-2])
         self.NormalizeThetaM()
         self.IterateMagnetisation()
         s1="System simulation for "

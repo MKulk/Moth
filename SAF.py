@@ -14,20 +14,7 @@ SAFParameters={
             "InitPositionSingle":            10,
             "PeriodicBoundaryConditions":    False
             }
-SAFParameters1={
-            "MaterialThickness":            (1.2,       1.2),
-            "MLThickness":                  (0.15,      0.15),
-            "MaterialName":                 ("FeCr1",   "FeCr2"),
-            "MaterialS":                    (1,         1),
-            "MaterialExtraField":           (0,         0),
-            "MaterialExtraFieldDirection":  (0,         0),
-            "MaterialSaturationM":          (519,       519),
-            "CurieTemperature":             (0,         0),
-            "GammaCoefficient":             (0.78,      0.78),
-            "InitPosition":                 (80,        -80),
-            "LongRangeInteractionLength":   (0.2,       0.4),
-            "PeriodicBoundaryConditions":    False
-            }
+
 MaterialExchange={
             "FeCr1-FeCr1"   :0.045,
             "FeCr2-FeCr1"   :-0.0018,
@@ -60,7 +47,7 @@ S=simulation(DeleteFlag=True,
              LongRangeExchange=RKKYExchange,
              NumberOfIterationM=50,
              NumberOfIterationTheta=1,
-             NumberOfSteps=600)
+             NumberOfSteps=2000)
 
 S.mode(Debug=False)
 file=S.GetMHvsT(

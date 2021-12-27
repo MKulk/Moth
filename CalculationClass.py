@@ -64,10 +64,13 @@ class simulation:
         else:
             self.num_cores = multiprocessing.cpu_count()
 
-    def GetMvsH(self,Hmin=-0.1,Hmax=0.1,Hsteps=32,Text=1,FieldDirection=0.0001):
-        field=np.linspace(Hmin,Hmax,Hsteps)
+    #*****************************************
+    def GetMHvsT(self,Hmin=-0.1,Hmax=0.1,Hsteps=32,Tmin=1, Tmax=1, Tsteps=32,FieldDirection=0.0001):
+        field       =   np.linspace(Hmin,Hmax,Hsteps)
+        Temperature =   np.linspace(Tmin,Tmax,Tsteps)
+        result={}
         text="M(H)_profile"
-        data=Parallel(n_jobs=self.num_cores)(delayed(self.minimize)(TargetFolder=self.PathToFolderMH,Field=h,FieldDirection=FieldDirection,Temperature=Text,text=text) for h in field)
+        data=Parallel(n_jobs=self.num_cores)(delayed(self.minimize)(TargetFolder=self.PathToFolderMH,Field=h,FieldDirection=FieldDirection,Temperature=t,text=text) for h in field for t in Temperature)
         keys=list()
         for i in range(len(data)):
             CurrentKey=list(data[i].keys())[0]
@@ -81,19 +84,7 @@ class simulation:
                 if Tkey in list(element.keys()):
                     for Hkey in list(element[Tkey].keys()):
                         tmp[Tkey][Hkey]=element[Tkey][Hkey]
-        return tmp
-    
-    def GetMHvsT(self,Hmin=-0.1,Hmax=0.1,Hsteps=32,Tmin=1,Tmax=300,Tsteps=10,FieldDirection=0.0001):
-        result={}
-        Temperature=np.linspace(Tmin,Tmax,Tsteps)
-        for T in Temperature:
-            data=self.GetMvsH(
-                                Hmin=Hmin,
-                                Hmax=Hmax,
-                                Hsteps=Hsteps,
-                                Text=T,
-                                FieldDirection=FieldDirection)
-            result.update(data)
+        result=tmp
         result["Hmin"]      =   Hmin
         result["Hmax"]      =   Hmax
         result["Hsteps"]    =   Hsteps
@@ -103,12 +94,11 @@ class simulation:
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%d--%H-%M-%S")
         filename=self.PathToFolder+" results "+current_time+".json"
-        #dd.io.save(filename, result)
         with open(filename, 'w') as fout:
             json.dump(result, fout)
-        #np.save(filename, result)
         return filename
-
+        
+ 
 
 
     def ProcessMvsT(self,TargetFolder):

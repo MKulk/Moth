@@ -9,7 +9,9 @@ SAFParameters={
             "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          0),
             "GammaCoefficient":             (0.78,      0.78,       0.78,       0.78,       0.78,       0.78,       0.78,       0.78),
             "InitPosition":                 (80,        -80,        80,         -80,        80,         -80,        80,         -80),
-            "LongRangeInteractionLength":   (0.2,       0.2,        0.8,        0.8,        0.2,        0.2,        0.05,       1.0),
+            "LongRangeInteractionLength":   (0.4,       0.4,        0.4,        0.4,        0.4,        0.4,        0.4,       0.4),
+            "LongRangeExchangeFlag":         False,
+            "InitPositionSingle":            10,
             "PeriodicBoundaryConditions":    False
             }
 SAFParameters1={
@@ -28,8 +30,8 @@ SAFParameters1={
             }
 MaterialExchange={
             "FeCr1-FeCr1"   :0.045,
-            "FeCr2-FeCr1"   :0.000,
-            "FeCr1-FeCr2"   :0.000,
+            "FeCr2-FeCr1"   :-0.0018,
+            "FeCr1-FeCr2"   :-0.0018,
             "FeCr2-FeCr2"   :0.045
             }
 #Tc=300K gamma=0.045
@@ -44,7 +46,7 @@ Hsteps=32
 
 Tmin=10
 Tmax=400
-Tsteps=64
+Tsteps=5
 
 from CalculationClass import simulation, timeit
 from viewer import reader
@@ -60,7 +62,7 @@ S=simulation(DeleteFlag=True,
              NumberOfIterationTheta=1,
              NumberOfSteps=600)
 
-S.mode(Debug=True)
+S.mode(Debug=False)
 file=S.GetMHvsT(
                 Hmin=Hmin,
                 Hmax=Hmax,

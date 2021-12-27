@@ -24,6 +24,7 @@ class multilayer:
         self.GammaCoeff                         =   self.LayerConstructor(MaterialParameters["GammaCoefficient"])
         self.InitPosition                       =   self.LayerConstructor(MaterialParameters["InitPosition"])
         self.LongRangeInteractionLength         =   self.LayerConstructor(MaterialParameters["LongRangeInteractionLength"])
+        self.InitPositionSingle=   MaterialParameters["InitPositionSingle"]
         LongRangeExchangeFlag=MaterialParameters["LongRangeExchangeFlag"]
         if not LongRangeExchangeFlag:
             self.LongRangeExchangeFlag=False
@@ -58,7 +59,7 @@ class multilayer:
     def InitCalculation(self,NumberOfIterationM=5,NumberOfIterationTheta=100,NumberOfSteps=500,DescendingCoefficient=4):
         self.B          =   self.TranslateConstant(1)
         self.CHI        =   self.TranslateConstant(0.75)
-        self.ThetaM     =   self.TranslateConstant(90)#360*(0.5-np.random.rand(self.B.size))#
+        self.ThetaM     =   self.TranslateConstant(self.InitPositionSingle)#360*(0.5-np.random.rand(self.B.size))#
         #self.ThetaM     =   self.InitPosition[:]
         self.NumberOfIterationM = NumberOfIterationM
         self.NumberOfIterationTheta = NumberOfIterationTheta
@@ -91,6 +92,7 @@ class multilayer:
         self.IterateMagnetisation()    
     
     def CreateLongRangeMatrix(self):
+        """This function creates the 2d matrix that describes which element interact with which neighbour with which coefficient"""
         def flip(a):
             #flip 2d array along main diagonal
             b=np.zeros_like(a)
@@ -98,7 +100,6 @@ class multilayer:
                 for j in range(a[0].size):
                     b[j,i] = a[i,j]
             return b
-        """This function creates the 2d matrix of which element interact with which neighbour with which coefficient"""
         patternP=np.zeros(self.MaterialName.size,dtype=float)
         patternM=np.zeros(self.MaterialName.size,dtype=float)
         index=-1
@@ -162,7 +163,6 @@ class multilayer:
         return 0
     def UpdateHexi(self):
         #effective field calculaion. Not sure about the volume normalization
-        #Hexi            =   self.MLThickness*Hexi
         self.Hexi       =   self.Dot(self.M,1,0,self.Gamma)#self exchange
         return 0
     def UpdateHexN(self):
@@ -173,11 +173,7 @@ class multilayer:
         if self.LongRangeExchangeFlag:
             LongRangeExchangeEnergy=np.zeros_like(self.M)
             for i in range(self.M.size):
-                M2          =   self.M[self.NeighboursWeightMask[i]]
-                theta       =   self.ThetaM[self.NeighboursWeightMask[i]]-self.ThetaM[i]
-                const       =   self.NeighboursWeight[i,self.NeighboursWeightMask[i]]
-                aaa=self.Dot(M2,1,theta,const)
-                LongRangeExchangeEnergy[i]=np.sum(aaa)
+                LongRangeExchangeEnergy[i]=np.sum(self.Dot(self.M[self.NeighboursWeightMask[i]],1,self.ThetaM[self.NeighboursWeightMask[i]]-self.ThetaM[i],self.NeighboursWeight[i,self.NeighboursWeightMask[i]]))
             self.LongRangeExchange       =   LongRangeExchangeEnergy #actually field but who cares
         return 0
 #    def UpdateHexNOld(self,OldTheta=None):
@@ -228,10 +224,8 @@ class multilayer:
 #        return 0
 
     def UpdateHzz(self):
-        #effective field calculaion. Not sure about the volume normalization
-        Hz              =   self.Dot(self.Field,1,self.ThetaM-self.FieldDirection,1) #Zeeman with external field
-        Hsup            =   self.Dot(self.MaterialExtraField,1,self.ThetaM-self.MaterialExtraFieldDirection,1) # Zeeman with supplementary field
-        self.Hezz       =   Hz+Hsup
+        #Zeeman with external field + Zeeman with supplementary field
+        self.Hezz       =   self.Dot(self.Field,1,self.ThetaM-self.FieldDirection,1)+self.Dot(self.MaterialExtraField,1,self.ThetaM-self.MaterialExtraFieldDirection,1)
         return 0
     def UpdateHeff(self):
         self.UpdateHexi()
@@ -252,26 +246,43 @@ class multilayer:
         self.delta=self.DescendingCoefficient
         self.IterateMagnetisation(50)
         Told=np.copy(self.ThetaM)
+        Bold=np.copy(self.B)
+        printFlag=True
         for i in range(self.NumberOfSteps):
             self.MinimizeOrientation()
             self.IterateMagnetisation()
             dtheta=self.ThetaM-Told
+            dB=self.B-Bold
             Told=np.copy(self.ThetaM)
+            Bold=np.copy(self.B)
             cheatMask=self.B>1e-3
-            if i>5 and np.any(np.abs(dtheta)>1e-2):
-                cheatMaskM=self.B>1e-3
-                cheatMaskT1=np.abs(dtheta)>1e-2
-                cheatMaskT2=np.abs(dtheta)<=0.2
-                k=0.87*(1+0.07*cheatMaskT2)
-                self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k[cheatMask]*dtheta[cheatMask] # 0,87 magic number do not touch!!!
+            BError=1e-3
+            TError=1e-5
+            Bprecision=1e-12
+            Tprecision=1e-11
+            if i>10 and np.any(np.abs(dtheta)>TError):
+                cheatMaskM=self.B>BError
+                cheatMaskT=np.abs(dtheta)>TError
+                cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
+                k=0.87  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
+                self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k*dtheta[cheatMask] 
+            if i>20 and np.all(np.abs(dtheta)<Tprecision) and np.all(np.abs(dB<Bprecision)):
+                s1="Exit by precision for: "
+                s2="T="+str(self.Temperature)
+                s3=" H="+str(self.Field)
+                s4=" after "+str(i)+" iterations"
+                print(colored(s1, 'blue'), colored(s2, 'red'),colored(s3, 'red'),colored(s4,'blue'))
+                printFlag=False
+                break
             #print(i, self.ThetaM[2], self.ThetaM[-2])
         self.NormalizeThetaM()
         self.IterateMagnetisation()
-        s1="System simulation for "
-        s2="T="+str(self.Temperature)
-        s3=" H="+str(self.Field)
-        s4="is complete"
-        print(colored(s1, 'blue'), colored(s2, 'red'),colored(s3, 'red'),colored(s4, 'green'))
+        if printFlag:
+            s1="Exit by number of iterations for: "
+            s2="T="+str(self.Temperature)
+            s3=" H="+str(self.Field)
+            print(colored(s1, 'blue'), colored(s2, 'red'),colored(s3, 'red'))
+        
 
 
     def MinimizeOrientation(self):

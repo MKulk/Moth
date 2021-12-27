@@ -114,13 +114,17 @@ class multilayer:
                 else:
                     gammaLongRange=0
                 z=-delta*self.MLThickness[i]
-                patternP[i]=gammaLongRange*math.e**(z/self.LongRangeInteractionLength[i])
+                val=math.e**(z/self.LongRangeInteractionLength[i])
+                if abs(val)>0.01:
+                    patternP[i]=gammaLongRange*val
                 delta+=1
             else:
                 name1=self.MaterialName[i-1]
                 delta=0
                 z=-delta*self.MLThickness[i]
-                patternP[i]=gammaLongRange*math.e**(z/self.LongRangeInteractionLength[i])
+                val=math.e**(z/self.LongRangeInteractionLength[i])
+                if abs(val)>0.01:
+                    patternP[i]=gammaLongRange*val
                 delta+=1
                 index+=1
         index=self.LayerNumber[-1]+1
@@ -128,12 +132,16 @@ class multilayer:
         for i in reversed(range(self.MaterialName.size)):
             if index-self.LayerNumber[i]==1:
                 z=delta*self.MLThickness[i]
-                patternM[i]=math.e**(z/self.LongRangeInteractionLength[i])
+                val=math.e**(z/self.LongRangeInteractionLength[i])
+                if abs(val)>0.01:
+                    patternM[i]=val
                 delta-=1
             else:
                 delta=0
                 z=delta*self.MLThickness[i]
-                patternM[i]=math.e**(z/self.LongRangeInteractionLength[i])
+                val=math.e**(z/self.LongRangeInteractionLength[i])
+                if abs(val)>0.01:
+                    patternM[i]=val
                 delta-=1
                 index-=1
         #create matrix of exponents
@@ -153,6 +161,10 @@ class multilayer:
         #NeighboursWeight[NeighboursWeight<0.05]=0
         self.NeighboursWeight=NeighboursWeight
         self.NeighboursWeightMask=NeighboursWeight!=0
+        self.NeighboursWeightZero=np.zeros(self.B.size,dtype=bool)
+        for i in range(self.B.size):
+            self.NeighboursWeightZero[i]=np.any(self.NeighboursWeightMask[i])
+        
         #for i in range(self.B.size):
         #    for j in range(self.B.size):
         #        print(i, j, self.NeighboursWeight[i,j])
@@ -173,7 +185,10 @@ class multilayer:
         if self.LongRangeExchangeFlag:
             LongRangeExchangeEnergy=np.zeros_like(self.M)
             for i in range(self.M.size):
-                LongRangeExchangeEnergy[i]=np.sum(self.Dot(self.M[self.NeighboursWeightMask[i]],1,self.ThetaM[self.NeighboursWeightMask[i]]-self.ThetaM[i],self.NeighboursWeight[i,self.NeighboursWeightMask[i]]))
+                if not self.NeighboursWeightZero[i]:
+                    LongRangeExchangeEnergy[i]=0
+                else:
+                    LongRangeExchangeEnergy[i]=np.sum(self.Dot(self.M[self.NeighboursWeightMask[i]],1,self.ThetaM[self.NeighboursWeightMask[i]]-self.ThetaM[i],self.NeighboursWeight[i,self.NeighboursWeightMask[i]]))
             self.LongRangeExchange       =   LongRangeExchangeEnergy #actually field but who cares
         return 0
 #    def UpdateHexNOld(self,OldTheta=None):

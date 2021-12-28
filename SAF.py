@@ -97,7 +97,7 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
                  NumberOfIterationM=10,
                  NumberOfIterationTheta=1,
                  NumberOfSteps=600)
-    S.mode(Debug=True)
+    S.mode(Debug=False)
     file=S.GetMHvsT(
                     Hmin=Hmin,
                     Hmax=Hmax,

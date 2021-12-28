@@ -33,8 +33,8 @@ class simulation:
         self.StructureExchange=StructureExchange
         self.LongRangeExchange= LongRangeExchange
         self.PathToFolder = PathToFolder
-        self.PathToFolderMH=self.PathToFolder+"\\MH"
-        self.PathToFolderMT=self.PathToFolder+"\\MT"
+        self.PathToFolderMH=self.PathToFolder+"-MH"
+        self.PathToFolderMT=self.PathToFolder+"-MT"
         self.NumberOfIterationTheta= NumberOfIterationTheta
         self.NumberOfSteps= NumberOfSteps
         self.NumberOfIterationM= NumberOfIterationM

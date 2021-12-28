@@ -1,3 +1,19 @@
+SAFParameters0={
+            "MaterialThickness":            (1.2,       1.2,        1.2,        1.2,        1.2,        1.2,        1.2,        1.2),
+            "MLThickness":                  (0.15,      0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15),
+            "MaterialName":                 ("FeCr1",   "FeCr2",    "FeCr1",    "FeCr2",    "FeCr1",    "FeCr2",    "FeCr1",    "FeCr2"),
+            "MaterialS":                    (1,         1,          1,          1,          1,          1,          1,          1),
+            "MaterialExtraField":           (0,         0,          0,          0,          0,          0,          0,          0),
+            "MaterialExtraFieldDirection":  (0,         0,          0,          0,          0,          0,          0,          0),
+            "MaterialSaturationM":          (519,       519,        519,        519,        519,        519,        519,        519),
+            "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          0),
+            "GammaCoefficient":             (0.86,      0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86),
+            "InitPosition":                 (80,        -80,        80,         -80,        80,         -80,        80,         -80),
+            "LongRangeInteractionLength":   (0.15,      0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15),
+            "LongRangeExchangeFlag":         False,
+            "InitPositionSingle":            10,
+            "PeriodicBoundaryConditions":    False
+            }
 SAFParameters1={
             "MaterialThickness":            (1.2,       1.2,        1.2,        1.2,        1.2,        1.2,        1.2,        1.2),
             "MLThickness":                  (0.15,      0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15),
@@ -93,6 +109,8 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     data=reader(file)
     data.GetMHonT()
     data.GetMTonH()
+#no long range interaction
+f(PathToFolder="SAF RKKY J=-0.0000 l=0.00",StructureParameters=SAFParameters0,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.15
 f(PathToFolder="SAF RKKY J=-0.0018 l=0.15",StructureParameters=SAFParameters1,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)

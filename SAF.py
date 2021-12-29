@@ -62,6 +62,22 @@ SAFParameters3={
             "InitPositionSingle":            10,
             "PeriodicBoundaryConditions":    False
             }
+SAFParameters4={
+            "MaterialThickness":            (1.2,       1.2,        1.2,        1.2,        1.2,        1.2,        1.2,        1.2),
+            "MLThickness":                  (0.15,      0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15),
+            "MaterialName":                 ("FeCr1",   "FeCr2",    "FeCr1",    "FeCr2",    "FeCr1",    "FeCr2",    "FeCr1",    "FeCr2"),
+            "MaterialS":                    (1,         1,          1,          1,          1,          1,          1,          1),
+            "MaterialExtraField":           (0,         0,          0,          0,          0,          0,          0,          0),
+            "MaterialExtraFieldDirection":  (0,         0,          0,          0,          0,          0,          0,          0),
+            "MaterialSaturationM":          (519,       519,        519,        519,        519,        519,        519,        519),
+            "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          0),
+            "GammaCoefficient":             (0.86,      0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86),
+            "InitPosition":                 (80,        -80,        80,         -80,        80,         -80,        80,         -80),
+            "LongRangeInteractionLength":   (0.6,       0.6,        0.6,        0.6,        0.6,        0.6,        0.6,        0.6),
+            "LongRangeExchangeFlag":         True,
+            "InitPositionSingle":            10,
+            "PeriodicBoundaryConditions":    False
+            }
 
 MaterialExchange={
             "FeCr1-FeCr1"   :0.045,
@@ -110,13 +126,16 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     data.GetMHonT()
     data.GetMTonH()
 #no long range interaction
-f(PathToFolder="SAF RKKY J=-0.0000 l=0.00",StructureParameters=SAFParameters0,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+#f(PathToFolder="SAF RKKY J=-0.0000 l=0.00",StructureParameters=SAFParameters0,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.15
-f(PathToFolder="SAF RKKY J=-0.0018 l=0.15",StructureParameters=SAFParameters1,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+#f(PathToFolder="SAF RKKY J=-0.0018 l=0.15",StructureParameters=SAFParameters1,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.3
-f(PathToFolder="SAF RKKY J=-0.0018 l=0.30",StructureParameters=SAFParameters2,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+#f(PathToFolder="SAF RKKY J=-0.0018 l=0.30",StructureParameters=SAFParameters2,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.45
-f(PathToFolder="SAF RKKY J=-0.0018 l=0.45",StructureParameters=SAFParameters3,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+#f(PathToFolder="SAF RKKY J=-0.0018 l=0.45",StructureParameters=SAFParameters3,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+
+#Long range exchange length=0.6
+f(PathToFolder="SAF RKKY J=-0.0018 l=0.60",StructureParameters=SAFParameters4,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)

@@ -191,52 +191,6 @@ class multilayer:
                     LongRangeExchangeEnergy[i]=np.sum(self.Dot(self.M[self.NeighboursWeightMask[i]],1,self.ThetaM[self.NeighboursWeightMask[i]]-self.ThetaM[i],self.NeighboursWeight[i,self.NeighboursWeightMask[i]]))
             self.LongRangeExchange       =   LongRangeExchangeEnergy #actually field but who cares
         return 0
-#    def UpdateHexNOld(self,OldTheta=None):
-#        """previous version of exchange with a regular exchange and RKKY-ish exchange with scalable J"""
-#        """LongRangeExchange is a new variable that replaced the RKKY related component as the rkky-ish naming is incorrect"""
-#        Mip1            =   np.roll(self.M,-1)
-#        Mim1            =   np.roll(self.M,1)
-#        Mip2            =   np.roll(self.M,-2)
-#        Mim2            =   np.roll(self.M,2)
-#        if self.RKKYactive:
-#            Bp1            =   np.roll(self.B,-1)
-#            Bm1            =   np.roll(self.B,1)
-#            Bp2            =   np.roll(self.B,-2)
-#            Bm2            =   np.roll(self.B,2)
-#            RKKYJip1            =   self.RKKYP1*Bp1
-#            RKKYJim1            =   self.RKKYM1*Bm1
-#            RKKYJip2            =   self.RKKYP2*Bp2
-#            RKKYJim2            =   self.RKKYM2*Bm2
-#
-#        Jip1            =   self.GammaP1
-#        Jim1            =   self.GammaM1
-#        Jip2            =   self.GammaP2
-#        Jim2            =   self.GammaM2
-#        #effective field calculaion. Not sure about the volume normalization
-#        if type(OldTheta)!=type(np.array([])):
-#            dThetap1        =   np.roll(self.ThetaM,-1)-self.ThetaM
-#            dThetam1        =   np.roll(self.ThetaM,1) -self.ThetaM
-#            dThetap2        =   np.roll(self.ThetaM,-2)-self.ThetaM
-#            dThetam2        =   np.roll(self.ThetaM,2) -self.ThetaM
-#        else:
-#            dThetap1        =   np.roll(self.ThetaM,-1)-OldTheta
-#            dThetam1        =   np.roll(self.ThetaM,1) -OldTheta
-#            dThetap2        =   np.roll(self.ThetaM,-2)-OldTheta
-#            dThetam2        =   np.roll(self.ThetaM,2) -OldTheta
-#        Hex1            =   (self.Dot(Mim1,1,dThetam1,Jim1)+self.Dot(Mip1,1,dThetap1,Jip1))
-#        #Hex1            =   self.MLThickness*Hex1
-#        Hex2            =   (self.Dot(Mim2,1,dThetam2,Jim2)+self.Dot(Mip2,1,dThetap2,Jip2))
-#        #Hex2            =   self.MLThickness*Hex2
-#        if self.RKKYactive:
-#            HexRKKY1            =   (self.Dot(Mim1,1,dThetam1,RKKYJim1)+self.Dot(Mip1,1,dThetap1,RKKYJip1))
-#            HexRKKY2            =   (self.Dot(Mim2,1,dThetam2,RKKYJim2)+self.Dot(Mip2,1,dThetap2,RKKYJip2))
-#            HRKKY            =   HexRKKY1+HexRKKY2
-#            self.HRKKY       =   HRKKY
-#        else:
-#            self.HRKKY       =   np.zeros_like(self.B)
-#        HexN            =   Hex1+Hex2
-#        self.HexN       =   HexN
-#        return 0
 
     def UpdateHzz(self):
         #Zeeman with external field + Zeeman with supplementary field
@@ -270,16 +224,17 @@ class multilayer:
             dB=self.B-Bold
             Told=np.copy(self.ThetaM)
             Bold=np.copy(self.B)
-            cheatMask=self.B>1e-3
-            BError=1e-3
-            TError=1e-5
-            Bprecision=1e-12
-            Tprecision=1e-11
-            if i>10 and np.any(np.abs(dtheta)>TError):
+            
+            BError=1e-2
+            #TError=1e-5
+            Bprecision=1e-10
+            Tprecision=1e-12
+            cheatMask=self.B>BError
+            if i>10 and np.any(np.abs(dtheta)>Tprecision):
                 cheatMaskM=self.B>BError
-                cheatMaskT=np.abs(dtheta)>TError
+                cheatMaskT=np.abs(dtheta)>Tprecision
                 cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
-                k=0.87  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
+                k=0.86  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
                 self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k*dtheta[cheatMask] 
             if i>20 and np.all(np.abs(dtheta)<Tprecision) and np.all(np.abs(dB<Bprecision)):
                 s1="Exit by precision for: "

@@ -100,9 +100,9 @@ from viewer import reader
 def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     Hmin=0.001
     Hmax=1
-    Hsteps=32
-    Tmin=10
-    Tmax=400
+    Hsteps=64
+    Tmin=285#10
+    Tmax=315#400
     Tsteps=32
     S=simulation(DeleteFlag=True,
                  DescendingCoefficient=2,
@@ -112,7 +112,7 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
                  LongRangeExchange=LongRangeExchange,
                  NumberOfIterationM=10,
                  NumberOfIterationTheta=1,
-                 NumberOfSteps=600)
+                 NumberOfSteps=2400)
     S.mode(Debug=False)
     file=S.GetMHvsT(
                     Hmin=Hmin,
@@ -135,7 +135,7 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
 #f(PathToFolder="SAF RKKY J=-0.0018 l=0.30",StructureParameters=SAFParameters2,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.45
-#f(PathToFolder="SAF RKKY J=-0.0018 l=0.45",StructureParameters=SAFParameters3,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+f(PathToFolder="SAF RKKY J=-0.0018 l=0.45 near Tc",StructureParameters=SAFParameters3,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.6
-f(PathToFolder="SAF RKKY J=-0.0018 l=0.60",StructureParameters=SAFParameters4,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+#f(PathToFolder="SAF RKKY J=-0.0018 l=0.60",StructureParameters=SAFParameters4,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)

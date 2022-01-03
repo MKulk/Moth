@@ -59,8 +59,8 @@ class multilayer:
     def InitCalculation(self,NumberOfIterationM=5,NumberOfIterationTheta=100,NumberOfSteps=500,DescendingCoefficient=4):
         self.B          =   self.TranslateConstant(1)
         self.CHI        =   self.TranslateConstant(0.75)
-        self.ThetaM     =   self.TranslateConstant(self.InitPositionSingle)#360*(0.5-np.random.rand(self.B.size))#
-        #self.ThetaM     =   self.InitPosition[:]
+        #self.ThetaM     =   self.TranslateConstant(self.InitPositionSingle)#360*(0.5-np.random.rand(self.B.size))#
+        self.ThetaM     =   np.copy(self.InitPosition)
         self.NumberOfIterationM = NumberOfIterationM
         self.NumberOfIterationTheta = NumberOfIterationTheta
         self.NumberOfSteps = NumberOfSteps
@@ -230,7 +230,7 @@ class multilayer:
             Bprecision=1e-10
             Tprecision=1e-12
             cheatMask=self.B>BError
-            if i>10 and np.any(np.abs(dtheta)>Tprecision):
+            if i>20 and np.any(np.abs(dtheta)>Tprecision):
                 cheatMaskM=self.B>BError
                 cheatMaskT=np.abs(dtheta)>Tprecision
                 cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
@@ -332,7 +332,7 @@ class multilayer:
         return result
 
     def TranslateConstant(self,const):
-        return np.full(self.MaterialName.shape,const,dtype=np.double)
+        return np.full(self.MaterialName.shape,const,dtype=float)
 
     def DefineExchange(self):
         #define i-1 element

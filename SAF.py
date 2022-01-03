@@ -8,7 +8,7 @@ SAFParameters0={
             "MaterialSaturationM":          (519,       519,        519,        519,        519,        519,        519,        519),
             "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          0),
             "GammaCoefficient":             (0.86,      0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86),
-            "InitPosition":                 (80,        -80,        80,         -80,        80,         -80,        80,         -80),
+            "InitPosition":                 (80.0,      -80.0,      80.0,       -80.0,      80.0,       -80.0,      80.0,       -80.0),
             "LongRangeInteractionLength":   (0.15,      0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15),
             "LongRangeExchangeFlag":         False,
             "InitPositionSingle":            10,
@@ -24,7 +24,7 @@ SAFParameters1={
             "MaterialSaturationM":          (519,       519,        519,        519,        519,        519,        519,        519),
             "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          0),
             "GammaCoefficient":             (0.86,      0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86),
-            "InitPosition":                 (80,        -80,        80,         -80,        80,         -80,        80,         -80),
+            "InitPosition":                 (80.0,      -80.0,      80.0,       -80.0,      80.0,       -80.0,      80.0,       -80.0),
             "LongRangeInteractionLength":   (0.15,      0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15),
             "LongRangeExchangeFlag":         True,
             "InitPositionSingle":            10,
@@ -40,7 +40,7 @@ SAFParameters2={
             "MaterialSaturationM":          (519,       519,        519,        519,        519,        519,        519,        519),
             "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          0),
             "GammaCoefficient":             (0.86,      0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86),
-            "InitPosition":                 (80,        -80,        80,         -80,        80,         -80,        80,         -80),
+            "InitPosition":                 (80.0,      -80.0,      80.0,       -80.0,      80.0,       -80.0,      80.0,       -80.0),
             "LongRangeInteractionLength":   (0.3,       0.3,        0.3,        0.3,        0.3,        0.3,        0.3,        0.3),
             "LongRangeExchangeFlag":         True,
             "InitPositionSingle":            10,
@@ -56,7 +56,7 @@ SAFParameters3={
             "MaterialSaturationM":          (519,       519,        519,        519,        519,        519,        519,        519),
             "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          0),
             "GammaCoefficient":             (0.86,      0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86),
-            "InitPosition":                 (80,        -80,        80,         -80,        80,         -80,        80,         -80),
+            "InitPosition":                 (80.0,      -80.0,      80.0,       -80.0,      80.0,       -80.0,      80.0,       -80.0),
             "LongRangeInteractionLength":   (0.45,      0.45,       0.45,       0.45,       0.45,       0.45,       0.45,       0.45),
             "LongRangeExchangeFlag":         True,
             "InitPositionSingle":            10,
@@ -72,7 +72,7 @@ SAFParameters4={
             "MaterialSaturationM":          (519,       519,        519,        519,        519,        519,        519,        519),
             "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          0),
             "GammaCoefficient":             (0.86,      0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86),
-            "InitPosition":                 (80,        -80,        80,         -80,        80,         -80,        80,         -80),
+            "InitPosition":                 (80.0,      -80.0,      80.0,       -80.0,      80.0,       -80.0,      80.0,       -80.0),
             "LongRangeInteractionLength":   (0.6,       0.6,        0.6,        0.6,        0.6,        0.6,        0.6,        0.6),
             "LongRangeExchangeFlag":         True,
             "InitPositionSingle":            10,
@@ -100,10 +100,10 @@ from viewer import reader
 def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     Hmin=0.001
     Hmax=1
-    Hsteps=64
-    Tmin=285#10
-    Tmax=315#400
-    Tsteps=32
+    Hsteps=32
+    Tmin=290#10
+    Tmax=292#400
+    Tsteps=2
     S=simulation(DeleteFlag=True,
                  DescendingCoefficient=2,
                  PathToFolder=PathToFolder,
@@ -135,7 +135,7 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
 #f(PathToFolder="SAF RKKY J=-0.0018 l=0.30",StructureParameters=SAFParameters2,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.45
-f(PathToFolder="SAF RKKY J=-0.0018 l=0.45 near Tc",StructureParameters=SAFParameters3,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+f(PathToFolder="SAF RKKY J=-0.0018 l=0.45",StructureParameters=SAFParameters3,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.6
 #f(PathToFolder="SAF RKKY J=-0.0018 l=0.60",StructureParameters=SAFParameters4,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)

@@ -99,11 +99,11 @@ from viewer import reader
 
 def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     Hmin=0.001
-    Hmax=1
-    Hsteps=32
-    Tmin=290#10
-    Tmax=292#400
-    Tsteps=2
+    Hmax=0.4
+    Hsteps=64
+    Tmin=298#10
+    Tmax=303#400
+    Tsteps=32
     S=simulation(DeleteFlag=True,
                  DescendingCoefficient=2,
                  PathToFolder=PathToFolder,
@@ -135,7 +135,7 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
 #f(PathToFolder="SAF RKKY J=-0.0018 l=0.30",StructureParameters=SAFParameters2,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.45
-f(PathToFolder="SAF RKKY J=-0.0018 l=0.45",StructureParameters=SAFParameters3,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+f(PathToFolder="SAF RKKY J=-0.0018 l=0.45 T=298-303",StructureParameters=SAFParameters3,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.6
 #f(PathToFolder="SAF RKKY J=-0.0018 l=0.60",StructureParameters=SAFParameters4,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)

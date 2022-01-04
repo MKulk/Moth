@@ -246,7 +246,7 @@ class multilayer:
                 break
             #print(i, self.ThetaM[2], self.ThetaM[-2])
         self.NormalizeThetaM()
-        self.IterateMagnetisation()
+        self.IterateMagnetisation(Number=1000)
         if printFlag:
             s1="Exit by number of iterations for: "
             s2="T="+str(self.Temperature)

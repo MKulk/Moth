@@ -110,7 +110,7 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
                  StructureParameters=StructureParameters,
                  StructureExchange=StructureExchange,
                  LongRangeExchange=LongRangeExchange,
-                 NumberOfIterationM=10,
+                 NumberOfIterationM=200,
                  NumberOfIterationTheta=1,
                  NumberOfSteps=2400)
     S.mode(Debug=False)

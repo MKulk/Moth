@@ -213,7 +213,7 @@ class multilayer:
     def IterateSystem(self):
         self.delta=np.ones_like(self.ThetaM)*self.DescendingCoefficient
         self.delta=self.DescendingCoefficient
-        self.IterateMagnetisation(50)
+        self.IterateMagnetisation(Number=1000)
         Told=np.copy(self.ThetaM)
         Bold=np.copy(self.B)
         printFlag=True
@@ -225,7 +225,7 @@ class multilayer:
             Told=np.copy(self.ThetaM)
             Bold=np.copy(self.B)
             
-            BError=1e-2
+            BError=1e-7
             #TError=1e-5
             Bprecision=1e-10
             Tprecision=1e-12

@@ -79,7 +79,8 @@ class multilayer:
         mask1=repeat1[0:self.ThetaM.size]
         mask2=repeat2[0:self.ThetaM.size]
         mask3=repeat3[0:self.ThetaM.size]
-        self.MaskSet=[mask1,mask2,mask3,mask3,mask2,mask1]
+        #self.MaskSet=[mask1,mask2,mask3,mask3,mask2,mask1]
+        self.MaskSet=[mask1,mask2,mask3,mask1,mask2,mask3]
         #biased element mask preparation
         self.Mip1            =   np.roll(np.arange(self.B.size),-1)
         self.Mim1            =   np.roll(np.arange(self.B.size),1)
@@ -225,18 +226,23 @@ class multilayer:
             Told=np.copy(self.ThetaM)
             Bold=np.copy(self.B)
             
-            BError=1e-7
+            BError=1e-2
             #TError=1e-5
-            Bprecision=1e-10
-            Tprecision=1e-12
-            cheatMask=self.B>BError
+            Bprecision=1e-5
+            Tprecision=1e-3
+            #if i>62:
+            #    for s in range(self.B.size):
+            #        print(i, s, self.B[s])
+            cheatMask=np.abs(self.B)>BError
             if i>20 and np.any(np.abs(dtheta)>Tprecision):
-                cheatMaskM=self.B>BError
+                cheatMaskM=np.abs(self.B)>BError
                 cheatMaskT=np.abs(dtheta)>Tprecision
                 cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
-                k=0.86  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
+                #blockMask=np.abs(dtheta)<0.2
+                #cheatMask=np.logical_and(cheatMask,blockMask)
+                k=0.0  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
                 self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k*dtheta[cheatMask] 
-            if i>20 and np.all(np.abs(dtheta)<Tprecision) and np.all(np.abs(dB<Bprecision)):
+            if i>10 and np.all(np.abs(dtheta)<Tprecision) and np.all(np.abs(dB<Bprecision)):
                 s1="Exit by precision for: "
                 s2="T="+str(self.Temperature)
                 s3=" H="+str(self.Field)
@@ -244,7 +250,7 @@ class multilayer:
                 print(colored(s1, 'blue'), colored(s2, 'red'),colored(s3, 'red'),colored(s4,'blue'))
                 printFlag=False
                 break
-            #print(i, self.ThetaM[2], self.ThetaM[-2])
+            #print(i, self.ThetaM[44],self.M[44])
         self.NormalizeThetaM()
         self.IterateMagnetisation(Number=1000)
         if printFlag:
@@ -256,7 +262,7 @@ class multilayer:
 
 
     def MinimizeOrientation(self):
-        for i in range(100):
+        for i in range(2):
             for M in self.MaskSet:
                 """the optimal position is max projection of HexN+Hzz"""
                 self.UpdateHeff()
@@ -289,14 +295,15 @@ class multilayer:
                 Sp=(Heffp-Heff)/self.delta
                 Sm=(Heff-Heffm)/self.delta
                 dSpm=Sp-Sm
-                dSpm[dSpm==0]=1e-20
+                dSpm[dSpm==0]=1.0#1e-20
                 shift3=(-Sm*self.delta/dSpm)-self.delta/2
                 #calculate total shift
                 shift=np.zeros_like(self.ThetaM)
                 shift[C1]=shift1[C1]
                 shift[C2]=shift2[C2]
                 shift[C3]=shift3[C3]
-                self.ThetaM[M]=self.ThetaM[M]+shift[M]
+                self.ThetaM[M]=self.ThetaM[M]+1.5*shift[M]
+                self.IterateMagnetisation(Number=40)#not lower than 40!!!!11111
         self.NormalizeThetaM()
 
     def NormalizeThetaM(self):
@@ -320,6 +327,7 @@ class multilayer:
     def Brillouin(self):
         S=self.MaterialS
         self.B=((2*S+1)/(2*S))*self.coth(self.CHI*((2*S+1)/(2*S)))-(1/(2*S))*self.coth(self.CHI/(2*S))
+        #self.B=np.abs(self.B)
         return 0 
 
     def LayerConstructor(self,pattern):

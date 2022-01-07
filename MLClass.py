@@ -214,7 +214,7 @@ class multilayer:
     def IterateSystem(self):
         self.delta=np.ones_like(self.ThetaM)*self.DescendingCoefficient
         self.delta=self.DescendingCoefficient
-        self.IterateMagnetisation(Number=1000)
+        self.IterateMagnetisation(Number=50)
         Told=np.copy(self.ThetaM)
         Bold=np.copy(self.B)
         printFlag=True
@@ -228,21 +228,21 @@ class multilayer:
             
             BError=1e-2
             #TError=1e-5
-            Bprecision=1e-5
-            Tprecision=1e-3
+            Bprecision=1e-6
+            Tprecision=1e-6
             #if i>62:
             #    for s in range(self.B.size):
             #        print(i, s, self.B[s])
-            cheatMask=np.abs(self.B)>BError
-            if i>20 and np.any(np.abs(dtheta)>Tprecision):
-                cheatMaskM=np.abs(self.B)>BError
-                cheatMaskT=np.abs(dtheta)>Tprecision
-                cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
-                #blockMask=np.abs(dtheta)<0.2
-                #cheatMask=np.logical_and(cheatMask,blockMask)
-                k=0.0  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
-                self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k*dtheta[cheatMask] 
-            if i>10 and np.all(np.abs(dtheta)<Tprecision) and np.all(np.abs(dB<Bprecision)):
+            #cheatMask=np.abs(self.B)>BError
+            #if i>20 and np.any(np.abs(dtheta)>Tprecision):
+            #    cheatMaskM=np.abs(self.B)>BError
+            #    cheatMaskT=np.abs(dtheta)>Tprecision
+            #    cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
+            #    #blockMask=np.abs(dtheta)<0.2
+            #    #cheatMask=np.logical_and(cheatMask,blockMask)
+            #    k=0.0  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
+            #    self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k*dtheta[cheatMask] 
+            if i>10 and np.all(np.abs(dtheta)<Tprecision) and np.all(np.abs(dB)<Bprecision):
                 s1="Exit by precision for: "
                 s2="T="+str(self.Temperature)
                 s3=" H="+str(self.Field)
@@ -250,7 +250,8 @@ class multilayer:
                 print(colored(s1, 'blue'), colored(s2, 'red'),colored(s3, 'red'),colored(s4,'blue'))
                 printFlag=False
                 break
-            #print(i, self.ThetaM[44],self.M[44])
+            #nn=28
+            #print(i, self.ThetaM[nn],self.M[nn])
         self.NormalizeThetaM()
         self.IterateMagnetisation(Number=1000)
         if printFlag:
@@ -262,7 +263,7 @@ class multilayer:
 
 
     def MinimizeOrientation(self):
-        for i in range(2):
+        for i in range(3):
             for M in self.MaskSet:
                 """the optimal position is max projection of HexN+Hzz"""
                 self.UpdateHeff()

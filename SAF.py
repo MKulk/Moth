@@ -96,13 +96,13 @@ RKKYExchange={
 from CalculationClass import simulation, timeit
 from viewer import reader
 
-
+@timeit
 def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
-    Hmin=0.1#338
-    Hmax=0.2#338
+    Hmin=0.18#338
+    Hmax=0.28#1338
     Hsteps=12
-    Tmin=300.32#10
-    Tmax=300.32#400
+    Tmin=299.35#300.32#10
+    Tmax=299.35#300.32#400
     Tsteps=1
     S=simulation(DeleteFlag=True,
                  DescendingCoefficient=2,

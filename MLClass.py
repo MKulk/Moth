@@ -23,6 +23,7 @@ class multilayer:
         self.space                              =   np.cumsum(self.MLThickness)
         self.GammaCoeff                         =   self.LayerConstructor(MaterialParameters["GammaCoefficient"])
         self.InitPosition                       =   self.LayerConstructor(MaterialParameters["InitPosition"])
+        self.InitB                              =   self.LayerConstructor(MaterialParameters["InitB"])  
         self.LongRangeInteractionLength         =   self.LayerConstructor(MaterialParameters["LongRangeInteractionLength"])
         self.InitPositionSingle=   MaterialParameters["InitPositionSingle"]
         LongRangeExchangeFlag=MaterialParameters["LongRangeExchangeFlag"]
@@ -57,8 +58,8 @@ class multilayer:
         self.Temperature = Temperature
 
     def InitCalculation(self,NumberOfIterationM=5,NumberOfIterationTheta=100,NumberOfSteps=500,DescendingCoefficient=4):
-        self.B          =   self.TranslateConstant(1)
-        self.CHI        =   self.TranslateConstant(0.75)
+        self.B          =   np.copy(self.InitB)#self.TranslateConstant(1)
+        self.CHI        =   np.copy(self.InitB)#self.TranslateConstant(0.75)
         #self.ThetaM     =   self.TranslateConstant(self.InitPositionSingle)#360*(0.5-np.random.rand(self.B.size))#
         self.ThetaM     =   np.copy(self.InitPosition)
         self.NumberOfIterationM = NumberOfIterationM
@@ -214,7 +215,7 @@ class multilayer:
     def IterateSystem(self):
         self.delta=np.ones_like(self.ThetaM)*self.DescendingCoefficient
         self.delta=self.DescendingCoefficient
-        self.IterateMagnetisation(Number=50)
+        self.IterateMagnetisation(Number=250)
         Told=np.copy(self.ThetaM)
         Bold=np.copy(self.B)
         printFlag=True
@@ -228,8 +229,8 @@ class multilayer:
             
             BError=1e-2
             #TError=1e-5
-            Bprecision=1e-6
-            Tprecision=1e-6
+            Bprecision=1e-7
+            Tprecision=1e-4
             #if i>62:
             #    for s in range(self.B.size):
             #        print(i, s, self.B[s])
@@ -253,7 +254,7 @@ class multilayer:
             #nn=28
             #print(i, self.ThetaM[nn],self.M[nn])
         self.NormalizeThetaM()
-        self.IterateMagnetisation(Number=1000)
+        self.IterateMagnetisation(Number=250)
         if printFlag:
             s1="Exit by number of iterations for: "
             s2="T="+str(self.Temperature)
@@ -263,7 +264,7 @@ class multilayer:
 
 
     def MinimizeOrientation(self):
-        for i in range(3):
+        for i in range(2):
             for M in self.MaskSet:
                 """the optimal position is max projection of HexN+Hzz"""
                 self.UpdateHeff()
@@ -304,7 +305,7 @@ class multilayer:
                 shift[C2]=shift2[C2]
                 shift[C3]=shift3[C3]
                 self.ThetaM[M]=self.ThetaM[M]+1.5*shift[M]
-                self.IterateMagnetisation(Number=40)#not lower than 40!!!!11111
+                self.IterateMagnetisation()#not lower than 40!!!!11111
         self.NormalizeThetaM()
 
     def NormalizeThetaM(self):

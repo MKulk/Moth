@@ -63,4 +63,4 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     data.GetMTonH()
 
 #Long range exchange length=0.45
-f(PathToFolder="F-f-F AF-RKKY H=0-1 T=250-350 16x16",StructureParameters=SAFParameters5,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+f(PathToFolder="F-f-F AF-RKKY H=0-1 T=250-350 16x16",StructureParameters=SAFParameters,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)

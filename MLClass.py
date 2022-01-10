@@ -81,7 +81,7 @@ class multilayer:
         mask2=repeat2[0:self.ThetaM.size]
         mask3=repeat3[0:self.ThetaM.size]
         #self.MaskSet=[mask1,mask2,mask3,mask3,mask2,mask1]
-        self.MaskSet=[mask1,mask2,mask3,mask1,mask2,mask3]
+        self.MaskSet=[mask1,mask2,mask3,mask3,mask2,mask1]
         #biased element mask preparation
         self.Mip1            =   np.roll(np.arange(self.B.size),-1)
         self.Mim1            =   np.roll(np.arange(self.B.size),1)
@@ -229,8 +229,8 @@ class multilayer:
             
             BError=1e-2
             #TError=1e-5
-            Bprecision=1e-7
-            Tprecision=1e-4
+            Bprecision=1e-8
+            Tprecision=1e-5
             #if i>62:
             #    for s in range(self.B.size):
             #        print(i, s, self.B[s])

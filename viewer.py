@@ -60,7 +60,7 @@ class reader():
         np.savetxt(self.filename+"_Mx_vs_T"+".txt", Mx, delimiter=' ', header=header,comments='')
         np.savetxt(self.filename+"_My_vs_T"+".txt", My, delimiter=' ', header=header,comments='')
         np.savetxt(self.filename+"_Ma_vs_T"+".txt", Ma, delimiter=' ', header=header,comments='')
-
+    
 if __name__ == "__main__":
     import os
     files = [f for f in os.listdir('.') if os.path.isfile(f)]

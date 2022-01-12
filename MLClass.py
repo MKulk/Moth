@@ -2,7 +2,7 @@ import numpy as np
 import os
 from termcolor import colored
 import math
-
+import time
 
 
 
@@ -84,17 +84,33 @@ class multilayer:
         mask2=repeat2[0:self.ThetaM.size]
         mask3=repeat3[0:self.ThetaM.size]
         #self.MaskSet=[mask1,mask2,mask3,mask3,mask2,mask1]
-        self.MaskSet=[mask1,mask2,mask3,mask3,mask2,mask1]
+        self.MaskSet=[mask1,mask2,mask3]
         #biased element mask preparation
         self.Mip1            =   np.roll(np.arange(self.B.size),-1)
         self.Mim1            =   np.roll(np.arange(self.B.size),1)
         self.Mip2            =   np.roll(np.arange(self.B.size),-2)
         self.Mim2            =   np.roll(np.arange(self.B.size),2)
+        LayerMask1=np.zeros_like(self.LayerNumber)==0
+        self.LayerMaskSet=[LayerMask1]
         if self.LongRangeExchangeFlag:
             self.CreateLongRangeMatrix()
+            LayerMask1=np.zeros_like(self.LayerNumber)==1
+            LayerMask1[self.LayerNumber%2==0]=True
+            LayerMask2=np.logical_not(LayerMask1)
+            self.LayerMaskSet=[LayerMask1,LayerMask2]
+        self.TotalMask=[]
+        tmp=np.zeros_like(LayerMask1)
+        for ML in self.LayerMaskSet:
+            for M in self.MaskSet:
+                cal=ML*M
+                if not np.all(cal==False):
+                    self.TotalMask.append(cal)
+                    tmp=np.logical_or(tmp,cal)
+                    print(tmp)
+        self.AllTrue=np.ones_like(self.LayerNumber)
         self.CalculateM()
         self.UpdateHeff()
-        self.IterateMagnetisation()    
+        self.IterateMagnetisation()
     
     def CreateLongRangeMatrix(self):
         """This function creates the 2d matrix that describes which element interact with which neighbour with which coefficient"""
@@ -239,14 +255,14 @@ class multilayer:
             #    for s in range(self.B.size):
             #        print(i, s, self.B[s])
             #cheatMask=np.abs(self.B)>BError
-            #if i>20 and np.any(np.abs(dtheta)>Tprecision):
-            #    cheatMaskM=np.abs(self.B)>BError
-            #    cheatMaskT=np.abs(dtheta)>Tprecision
-            #    cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
-            #    #blockMask=np.abs(dtheta)<0.2
-            #    #cheatMask=np.logical_and(cheatMask,blockMask)
-            #    k=0.0  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
-            #    self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k*dtheta[cheatMask] 
+            if i>20 and np.any(np.abs(dtheta)>Tprecision):
+                cheatMaskM=np.abs(self.B)>BError
+                cheatMaskT=np.abs(dtheta)>Tprecision
+                cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
+                #blockMask=np.abs(dtheta)<0.2
+                #cheatMask=np.logical_and(cheatMask,blockMask)
+                k=0.3  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
+                self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k*dtheta[cheatMask] 
             if i>20 and np.all(np.abs(dtheta)<Tprecision) and np.all(np.abs(dB)<Bprecision):
                 s1="Exit by precision for: "
                 s2="T="+str(self.Temperature)
@@ -255,8 +271,8 @@ class multilayer:
                 print(colored(s1, 'blue'), colored(s2, 'red'),colored(s3, 'red'),colored(s4,'blue'))
                 printFlag=False
                 break
-            nn=0
-            kk=6
+            nn=6
+            kk=16
             #print(i, self.ThetaM[nn],self.ThetaM[kk])
         self.NormalizeThetaM()
         self.IterateMagnetisation(Number=250)
@@ -270,8 +286,10 @@ class multilayer:
 
 
     def MinimizeOrientation(self):
-        for i in range(2):
+        for i in range(1):
+            #for M in self.TotalMask:
             for M in self.MaskSet:
+                #start = time.process_time()
                 """the optimal position is max projection of HexN+Hzz"""
                 self.UpdateHeff()
                 Heff=self.HexN+self.Hezz+self.LongRangeExchange
@@ -312,6 +330,7 @@ class multilayer:
                 shift[C3]=shift3[C3]
                 self.ThetaM[M]=self.ThetaM[M]+1.5*shift[M]
                 self.IterateMagnetisation()#not lower than 40!!!!11111
+                #print("time:", time.process_time() - start)
         self.NormalizeThetaM()
 
     def NormalizeThetaM(self):

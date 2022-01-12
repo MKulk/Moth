@@ -1,7 +1,7 @@
 SAFParameters={
-            "MaterialThickness":            (0.15,      1.2,        0.15,       1.2,        0.15,   ),
+            "MaterialThickness":            (0.60,      1.2,        0.60,       1.2,        0.60,   ),
             "MLThickness":                  (0.15,      0.15,       0.15,       0.15,       0.15,   ),
-            "ZeemanThickness":              (4.0,       1.0,        8.0,        1.0,        4.0,    ),
+            "ZeemanThickness":              (1.0,       1.0,        2.0,        1.0,        1.0,    ),
             "MaterialName":                 ("Fe1",     "FeCr",     "Fe2",      "FeCr",     "Fe1",  ),
             "MaterialS":                    (1,         1,          1,          1,          1,      ),
             "MaterialExtraField":           (0,         0,          0,          0,          0,      ),
@@ -44,7 +44,7 @@ from viewer import reader
 def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     Hmin=0.001
     Hmax=0.5
-    Hsteps=32
+    Hsteps=2
     Tmin=290
     Tmax=310
     Tsteps=32

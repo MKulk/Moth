@@ -80,18 +80,19 @@ SAFParameters4={
             "PeriodicBoundaryConditions":    False
             }
 SAFParameters5={
-            "MaterialThickness":            (1.2,       1.2,        1.2,        1.2,        1.2,        1.2,        1.2,        1.2,        1.2),
-            "MLThickness":                  (0.15,      0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15),
-            "MaterialName":                 ("FeCr1",   "FeCr2",    "FeCr1",    "FeCr2",    "FeCr1",    "FeCr2",    "FeCr1",    "FeCr2",   "FeCr1"),
-            "MaterialS":                    (1,         1,          1,          1,          1,          1,          1,          1,          1),
-            "MaterialExtraField":           (0,         0,          0,          0,          0,          0,          0,          0,          0),
-            "MaterialExtraFieldDirection":  (0,         0,          0,          0,          0,          0,          0,          0,          0),
-            "MaterialSaturationM":          (519,       519,        519,        519,        519,        519,        519,        519,        519),
-            "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          0,          0),
-            "GammaCoefficient":             (0.86,      0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86),
-            "InitPosition":                 (45.0,      -45.0,      45.0,       -45.0,      45.0,       -45.0,      45.0,       -45.0,      45),
-            "InitB":                        (0.75,      0.74,       0.75,       0.74,       0.75,       0.74,       0.75,       0.74,       0.75),
-            "LongRangeInteractionLength":   (0.45,      0.45,       0.45,       0.45,       0.45,       0.45,       0.45,       0.45,       0.45),
+            "MaterialThickness":            (1.2,       1.2,        1.2,        1.2,        1.2,        1.2,        1.2,        1.2,        1.2     ),
+            "MLThickness":                  (0.15,      0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15    ),
+            "ZeemanThickness":              (1.0,       1.0,        1.0,        1.0,        1.0,        1.0,        1.0,        1.0,        1.0     ),
+            "MaterialName":                 ("FeCr1",   "FeCr2",    "FeCr1",    "FeCr2",    "FeCr1",    "FeCr2",    "FeCr1",    "FeCr2",   "FeCr1"  ),
+            "MaterialS":                    (1,         1,          1,          1,          1,          1,          1,          1,          1       ),
+            "MaterialExtraField":           (0,         0,          0,          0,          0,          0,          0,          0,          0       ),
+            "MaterialExtraFieldDirection":  (0,         0,          0,          0,          0,          0,          0,          0,          0       ),
+            "MaterialSaturationM":          (519,       519,        519,        519,        519,        519,        519,        519,        519     ),
+            "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          0,          0       ),
+            "GammaCoefficient":             (0.86,      0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86    ),
+            "InitPosition":                 (45.0,      -45.0,      45.0,       -45.0,      45.0,       -45.0,      45.0,       -45.0,      45.0    ),
+            "InitB":                        (0.75,      0.74,       0.75,       0.74,       0.75,       0.74,       0.75,       0.74,       0.75    ),
+            "LongRangeInteractionLength":   (0.45,      0.45,       0.45,       0.45,       0.45,       0.45,       0.45,       0.45,       0.45    ),
             "LongRangeExchangeFlag":         True,
             "InitPositionSingle":            10,
             "PeriodicBoundaryConditions":    False
@@ -117,10 +118,10 @@ from viewer import reader
 def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     Hmin=0.001#338
     Hmax=0.3#1338
-    Hsteps=64
-    Tmin=299.35#10
-    Tmax=302.3#400
-    Tsteps=64
+    Hsteps=32
+    Tmin=299.95#10
+    Tmax=302.95#400
+    Tsteps=1
     S=simulation(DeleteFlag=True,
                  DescendingCoefficient=2,
                  PathToFolder=PathToFolder,
@@ -129,7 +130,7 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
                  LongRangeExchange=LongRangeExchange,
                  NumberOfIterationM=50,
                  NumberOfIterationTheta=1,
-                 NumberOfSteps=1000)
+                 NumberOfSteps=600)
     S.mode(Debug=False)
     file=S.GetMHvsT(
                     Hmin=Hmin,

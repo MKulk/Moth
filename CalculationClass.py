@@ -150,13 +150,6 @@ class simulation:
                           FieldDirection=FieldDirection) #init system
         system.InitCalculation(self.NumberOfIterationM,self.NumberOfIterationTheta,self.NumberOfSteps,self.DescendingCoefficient)
         system.SetExternalParameters(Field,FieldDirection,Temperature)
-        Plist=list()
-        for proc in psutil.process_iter():
-            processName = proc.name()
-            processID = proc.pid
-            if len(processName.split("ython"))>1:
-                Plist.append(processID)
-        thread=int(np.where(np.array(Plist)==system.pid)[0])
         system.IterateSystem()
         self.SaveToFile(TargetFolder=TargetFolder,strA="H",A=Field,strB="T",B=Temperature,string=text,space=system.space,moment=system.M,angle=system.ThetaM)
         data=self.GrabData(SystemInstance=system,Temperature=Temperature,Field=Field)

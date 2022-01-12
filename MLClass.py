@@ -2,7 +2,7 @@ import numpy as np
 import os
 from termcolor import colored
 import math
-
+import time
 
 
 
@@ -13,6 +13,7 @@ class multilayer:
         self.PeriodicBoundaryConditions         =   MaterialParameters["PeriodicBoundaryConditions"]
         self.NumberOfLayersConstruct            =   np.array(np.rint(np.array(MaterialParameters["MaterialThickness"])/np.array(MaterialParameters["MLThickness"])))
         self.MaterialName                       =   self.LayerConstructor(np.array(MaterialParameters["MaterialName"]))
+        self.ZeemanThickness                    =   self.LayerConstructor(np.array(MaterialParameters["ZeemanThickness"]))
         self.LayerNumber                        =   self.LayerConstructor(np.arange(len(MaterialParameters["MaterialName"])))
         self.MaterialS                          =   self.LayerConstructor(MaterialParameters["MaterialS"])
         self.MaterialExtraField                 =   self.LayerConstructor(MaterialParameters["MaterialExtraField"])
@@ -20,7 +21,9 @@ class multilayer:
         self.MaterialSaturationM                =   self.LayerConstructor(MaterialParameters["MaterialSaturationM"])
         self.CurieTemperature                   =   self.LayerConstructor(MaterialParameters["CurieTemperature"])
         self.MLThickness                        =   self.LayerConstructor(MaterialParameters["MLThickness"])
+        self.PresentedThickness                 =   self.LayerConstructor(data=MaterialParameters["MLThickness"],N=(np.array(self.NumberOfLayersConstruct)*np.array(MaterialParameters["ZeemanThickness"])))
         self.space                              =   np.cumsum(self.MLThickness)
+        self.PresentedSpace                     =   np.cumsum(self.PresentedThickness)
         self.GammaCoeff                         =   self.LayerConstructor(MaterialParameters["GammaCoefficient"])
         self.InitPosition                       =   self.LayerConstructor(MaterialParameters["InitPosition"])
         self.InitB                              =   self.LayerConstructor(MaterialParameters["InitB"])  
@@ -81,17 +84,33 @@ class multilayer:
         mask2=repeat2[0:self.ThetaM.size]
         mask3=repeat3[0:self.ThetaM.size]
         #self.MaskSet=[mask1,mask2,mask3,mask3,mask2,mask1]
-        self.MaskSet=[mask1,mask2,mask3,mask3,mask2,mask1]
+        self.MaskSet=[mask1,mask2,mask3]
         #biased element mask preparation
         self.Mip1            =   np.roll(np.arange(self.B.size),-1)
         self.Mim1            =   np.roll(np.arange(self.B.size),1)
         self.Mip2            =   np.roll(np.arange(self.B.size),-2)
         self.Mim2            =   np.roll(np.arange(self.B.size),2)
+        LayerMask1=np.zeros_like(self.LayerNumber)==0
+        self.LayerMaskSet=[LayerMask1]
         if self.LongRangeExchangeFlag:
             self.CreateLongRangeMatrix()
+            LayerMask1=np.zeros_like(self.LayerNumber)==1
+            LayerMask1[self.LayerNumber%2==0]=True
+            LayerMask2=np.logical_not(LayerMask1)
+            self.LayerMaskSet=[LayerMask1,LayerMask2]
+        self.TotalMask=[]
+        tmp=np.zeros_like(LayerMask1)
+        for ML in self.LayerMaskSet:
+            for M in self.MaskSet:
+                cal=ML*M
+                if not np.all(cal==False):
+                    self.TotalMask.append(cal)
+                    tmp=np.logical_or(tmp,cal)
+                    print(tmp)
+        self.AllTrue=np.ones_like(self.LayerNumber)
         self.CalculateM()
         self.UpdateHeff()
-        self.IterateMagnetisation()    
+        self.IterateMagnetisation()
     
     def CreateLongRangeMatrix(self):
         """This function creates the 2d matrix that describes which element interact with which neighbour with which coefficient"""
@@ -197,6 +216,7 @@ class multilayer:
     def UpdateHzz(self):
         #Zeeman with external field + Zeeman with supplementary field
         self.Hezz       =   self.Dot(self.Field,1,self.ThetaM-self.FieldDirection,1)+self.Dot(self.MaterialExtraField,1,self.ThetaM-self.MaterialExtraFieldDirection,1)
+        self.Hezz       =   self.Hezz*self.ZeemanThickness
         return 0
     def UpdateHeff(self):
         self.UpdateHexi()
@@ -229,21 +249,21 @@ class multilayer:
             
             BError=1e-2
             #TError=1e-5
-            Bprecision=1e-8
+            Bprecision=1e-7
             Tprecision=1e-5
             #if i>62:
             #    for s in range(self.B.size):
             #        print(i, s, self.B[s])
             #cheatMask=np.abs(self.B)>BError
-            #if i>20 and np.any(np.abs(dtheta)>Tprecision):
-            #    cheatMaskM=np.abs(self.B)>BError
-            #    cheatMaskT=np.abs(dtheta)>Tprecision
-            #    cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
-            #    #blockMask=np.abs(dtheta)<0.2
-            #    #cheatMask=np.logical_and(cheatMask,blockMask)
-            #    k=0.0  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
-            #    self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k*dtheta[cheatMask] 
-            if i>10 and np.all(np.abs(dtheta)<Tprecision) and np.all(np.abs(dB)<Bprecision):
+            if i>20 and np.any(np.abs(dtheta)>Tprecision):
+                cheatMaskM=np.abs(self.B)>BError
+                cheatMaskT=np.abs(dtheta)>Tprecision
+                cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
+                #blockMask=np.abs(dtheta)<0.2
+                #cheatMask=np.logical_and(cheatMask,blockMask)
+                k=0.3  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
+                self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k*dtheta[cheatMask] 
+            if i>20 and np.all(np.abs(dtheta)<Tprecision) and np.all(np.abs(dB)<Bprecision):
                 s1="Exit by precision for: "
                 s2="T="+str(self.Temperature)
                 s3=" H="+str(self.Field)
@@ -251,8 +271,9 @@ class multilayer:
                 print(colored(s1, 'blue'), colored(s2, 'red'),colored(s3, 'red'),colored(s4,'blue'))
                 printFlag=False
                 break
-            #nn=28
-            #print(i, self.ThetaM[nn],self.M[nn])
+            nn=6
+            kk=16
+            #print(i, self.ThetaM[nn],self.ThetaM[kk])
         self.NormalizeThetaM()
         self.IterateMagnetisation(Number=250)
         if printFlag:
@@ -260,12 +281,15 @@ class multilayer:
             s2="T="+str(self.Temperature)
             s3=" H="+str(self.Field)
             print(colored(s1, 'blue'), colored(s2, 'red'),colored(s3, 'red'))
+        self.PrepareData()
         
 
 
     def MinimizeOrientation(self):
-        for i in range(2):
+        for i in range(1):
+            #for M in self.TotalMask:
             for M in self.MaskSet:
+                #start = time.process_time()
                 """the optimal position is max projection of HexN+Hzz"""
                 self.UpdateHeff()
                 Heff=self.HexN+self.Hezz+self.LongRangeExchange
@@ -306,6 +330,7 @@ class multilayer:
                 shift[C3]=shift3[C3]
                 self.ThetaM[M]=self.ThetaM[M]+1.5*shift[M]
                 self.IterateMagnetisation()#not lower than 40!!!!11111
+                #print("time:", time.process_time() - start)
         self.NormalizeThetaM()
 
     def NormalizeThetaM(self):
@@ -332,15 +357,20 @@ class multilayer:
         #self.B=np.abs(self.B)
         return 0 
 
-    def LayerConstructor(self,pattern):
-        pattern=np.array(pattern)
-        N=np.array(self.NumberOfLayersConstruct)
-        result=np.empty(shape=0,dtype=pattern.dtype)
+    def LayerConstructor(self,data,N=None):
+        if N is None:
+            N=self.NumberOfLayersConstruct
+        data=np.array(data)
+        N=np.array(N)
+        result=np.empty(shape=0,dtype=data.dtype)
         for i in range(N.size):
-            arr=np.full(int(N[i]),pattern[i])
+            arr=np.full(int(N[i]),data[i])
             result=np.append(result,arr)
         return result
-
+    def PrepareData(self):
+        self.M      =   self.LayerConstructor(self.M,self.ZeemanThickness)
+        self.ThetaM =   self.LayerConstructor(self.ThetaM,self.ZeemanThickness)
+        self.space  =   self.PresentedSpace
     def TranslateConstant(self,const):
         return np.full(self.MaterialName.shape,const,dtype=float)
 

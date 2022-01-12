@@ -100,13 +100,12 @@ class multilayer:
             self.LayerMaskSet=[LayerMask1,LayerMask2]
         self.TotalMask=[]
         tmp=np.zeros_like(LayerMask1)
-        for ML in self.LayerMaskSet:
-            for M in self.MaskSet:
+        for M in self.MaskSet:
+            for ML in self.LayerMaskSet:
                 cal=ML*M
                 if not np.all(cal==False):
                     self.TotalMask.append(cal)
                     tmp=np.logical_or(tmp,cal)
-                    print(tmp)
         self.AllTrue=np.ones_like(self.LayerNumber)
         self.CalculateM()
         self.UpdateHeff()
@@ -287,8 +286,8 @@ class multilayer:
 
     def MinimizeOrientation(self):
         for i in range(1):
-            #for M in self.TotalMask:
-            for M in self.MaskSet:
+            for M in self.TotalMask:
+            #for M in self.MaskSet:
                 #start = time.process_time()
                 """the optimal position is max projection of HexN+Hzz"""
                 self.UpdateHeff()

@@ -117,11 +117,11 @@ from viewer import reader
 @timeit
 def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     Hmin=0.001#338
-    Hmax=0.3#1338
+    Hmax=1.0#1338
     Hsteps=32
-    Tmin=299.95#10
-    Tmax=302.95#400
-    Tsteps=1
+    Tmin=299 #10
+    Tmax=302#400
+    Tsteps=32
     S=simulation(DeleteFlag=True,
                  DescendingCoefficient=2,
                  PathToFolder=PathToFolder,
@@ -130,7 +130,7 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
                  LongRangeExchange=LongRangeExchange,
                  NumberOfIterationM=50,
                  NumberOfIterationTheta=1,
-                 NumberOfSteps=600)
+                 NumberOfSteps=1800)
     S.mode(Debug=False)
     file=S.GetMHvsT(
                     Hmin=Hmin,

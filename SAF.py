@@ -122,8 +122,8 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     Hmin=0.001#338
     Hmax=1.0#1338
     Hsteps=32
-    Tmin=300.9 #10
-    Tmax=300.9#400
+    Tmin=10 #10
+    Tmax=10#400
     Tsteps=1
     S=simulation(DeleteFlag=True,
                  DescendingCoefficient=2,

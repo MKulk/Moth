@@ -297,13 +297,13 @@ class multilayer:
             #    for s in range(self.B.size):
             #        print(i, s, self.B[s])
             #cheatMask=np.abs(self.B)>BError
-            if i>20 and np.any(np.abs(dtheta)>Tprecision):
-                cheatMaskM=np.abs(self.B)>BError
-                cheatMaskT=np.abs(dtheta)>Tprecision
-                cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
+            #if i>20 and np.any(np.abs(dtheta)>Tprecision):
+                #cheatMaskM=np.abs(self.B)>0.75
+                #cheatMaskT=np.abs(dtheta)>Tprecision
+                #cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
                 #blockMask=np.abs(dtheta)<0.2
                 #cheatMask=np.logical_and(cheatMask,blockMask)
-                #k=0.0  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
+                #k=0.5  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
                 #self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k*dtheta[cheatMask] 
             if i>20 and np.all(np.abs(dtheta)<Tprecision) and np.all(np.abs(dB)<Bprecision):
                 s1="Exit by precision for: "
@@ -313,8 +313,8 @@ class multilayer:
                 print(colored(s1, 'blue'), colored(s2, 'red'),colored(s3, 'red'),colored(s4,'blue'))
                 printFlag=False
                 break
-            nn=6
-            kk=16
+            nn=1
+            kk=6
             #print(i, self.ThetaM[nn],self.ThetaM[kk])
         self.NormalizeThetaM()
         self.IterateMagnetisation(Number=250)

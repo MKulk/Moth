@@ -106,6 +106,42 @@ class multilayer:
                 if not np.all(cal==False):
                     self.TotalMask.append(cal)
                     tmp=np.logical_or(tmp,cal)
+        ################################   delete after testing   ################################
+        #pattern1 =np.array([True, False, False, False, False, False, False, False, False, False])
+        #pattern2 =np.array([False, True, False, False, False, False, False, False, False, False])
+        #pattern3 =np.array([False, False, True, False, False, False, False, False, False, False])
+        #pattern4 =np.array([False, False, False, True, False, False, False, False, False, False])
+        #pattern5 =np.array([False, False, False, False, True, False, False, False, False, False])
+        #pattern6 =np.array([False, False, False, False, False, True, False, False, False, False])
+        #pattern7 =np.array([False, False, False, False, False, False, True, False, False, False])
+        #pattern8 =np.array([False, False, False, False, False, False, False, True, False, False])
+        #pattern9 =np.array([False, False, False, False, False, False, False, False, True, False])
+        #pattern10=np.array([False, False, False, False, False, False, False, False, False, True])
+        #
+        #N=1+round(self.ThetaM.size/pattern1.size)
+        #repeat1 =np.tile(pattern1,N)
+        #repeat2 =np.tile(pattern2,N)
+        #repeat3 =np.tile(pattern3,N)
+        #repeat4 =np.tile(pattern4,N)
+        #repeat5 =np.tile(pattern5,N)
+        #repeat6 =np.tile(pattern6,N)
+        #repeat7 =np.tile(pattern7,N)
+        #repeat8 =np.tile(pattern8,N)
+        #repeat9 =np.tile(pattern9,N)
+        #repeat10=np.tile(pattern10,N)
+        #mask1 =repeat1[0:self.ThetaM.size]
+        #mask2 =repeat2[0:self.ThetaM.size]
+        #mask3 =repeat3[0:self.ThetaM.size]
+        #mask4 =repeat4[0:self.ThetaM.size]
+        #mask5 =repeat5[0:self.ThetaM.size]
+        #mask6 =repeat6[0:self.ThetaM.size]
+        #mask7 =repeat7[0:self.ThetaM.size]
+        #mask8 =repeat8[0:self.ThetaM.size]
+        #mask9 =repeat9[0:self.ThetaM.size]
+        #mask10=repeat10[0:self.ThetaM.size]
+        ##self.MaskSet=[mask1,mask2,mask3,mask3,mask2,mask1]
+        #self.MaskSet=[mask1,mask2,mask3,mask4,mask5,mask6,mask7,mask8, mask9, mask10]
+        ###################################        end        ####################################
         self.AllTrue=np.ones_like(self.LayerNumber)
         self.CalculateM()
         self.UpdateHeff()
@@ -140,6 +176,11 @@ class multilayer:
                 delta+=1
             else:
                 name1=self.MaterialName[i-1]
+                exchangeName=name1+"-"+self.MaterialName[i]
+                if exchangeName in self.LongRangeExchangeTable:
+                    gammaLongRange=self.LongRangeExchangeTable[exchangeName]
+                else:
+                    gammaLongRange=0
                 delta=0
                 z=-delta*self.MLThickness[i]
                 val=math.e**(z/self.LongRangeInteractionLength[i])
@@ -178,7 +219,6 @@ class multilayer:
         NeighboursWeightP=MatrixM*MatrixP
         NeighboursWeightM=flip(NeighboursWeightP)
         NeighboursWeight=NeighboursWeightP+NeighboursWeightM
-        #NeighboursWeight[NeighboursWeight<0.05]=0
         self.NeighboursWeight=NeighboursWeight
         self.NeighboursWeightMask=NeighboursWeight!=0
         self.NeighboursWeightZero=np.zeros(self.B.size,dtype=bool)
@@ -188,6 +228,9 @@ class multilayer:
         #for i in range(self.B.size):
         #    for j in range(self.B.size):
         #        print(i, j, self.NeighboursWeight[i,j])
+        #print("exit")
+        #import sys
+        #sys.exit()
         return 0
 
     def CalculateM(self):
@@ -260,8 +303,8 @@ class multilayer:
                 cheatMask=np.logical_and(cheatMaskM,cheatMaskT)
                 #blockMask=np.abs(dtheta)<0.2
                 #cheatMask=np.logical_and(cheatMask,blockMask)
-                k=0.3  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
-                self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k*dtheta[cheatMask] 
+                #k=0.0  # 0.87 is maximum stable acceleration, the bigger number may destabilize the solutiuon
+                #self.ThetaM[cheatMask]=self.ThetaM[cheatMask]+k*dtheta[cheatMask] 
             if i>20 and np.all(np.abs(dtheta)<Tprecision) and np.all(np.abs(dB)<Bprecision):
                 s1="Exit by precision for: "
                 s2="T="+str(self.Temperature)

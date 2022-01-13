@@ -30,18 +30,21 @@ SAFParameters1={
             "InitPositionSingle":            10,
             "PeriodicBoundaryConditions":    False
             }
+
 SAFParameters2={
-            "MaterialThickness":            (1.2,       1.2,        1.2,        1.2,        1.2,        1.2,        1.2,        1.2),
-            "MLThickness":                  (0.15,      0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15),
-            "MaterialName":                 ("FeCr1",   "FeCr2",    "FeCr1",    "FeCr2",    "FeCr1",    "FeCr2",    "FeCr1",    "FeCr2"),
-            "MaterialS":                    (1,         1,          1,          1,          1,          1,          1,          1),
-            "MaterialExtraField":           (0,         0,          0,          0,          0,          0,          0,          0),
-            "MaterialExtraFieldDirection":  (0,         0,          0,          0,          0,          0,          0,          0),
-            "MaterialSaturationM":          (519,       519,        519,        519,        519,        519,        519,        519),
-            "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          0),
-            "GammaCoefficient":             (0.86,      0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86),
-            "InitPosition":                 (80.0,      -80.0,      80.0,       -80.0,      80.0,       -80.0,      80.0,       -80.0),
-            "LongRangeInteractionLength":   (0.3,       0.3,        0.3,        0.3,        0.3,        0.3,        0.3,        0.3),
+            "MaterialThickness":            (1.2,       1.2,        1.2,        1.2,        1.2,        1.2,        1.2,        1.2,        1.2     ),
+            "MLThickness":                  (0.15,      0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       0.15    ),
+            "ZeemanThickness":              (1.0,       1.0,        1.0,        1.0,        1.0,        1.0,        1.0,        1.0,        1.0     ),
+            "MaterialName":                 ("FeCr1",   "FeCr2",    "FeCr1",    "FeCr2",    "FeCr1",    "FeCr2",    "FeCr1",    "FeCr2",   "FeCr1"  ),
+            "MaterialS":                    (1,         1,          1,          1,          1,          1,          1,          1,          1       ),
+            "MaterialExtraField":           (0,         0,          0,          0,          0,          0,          0,          0,          0       ),
+            "MaterialExtraFieldDirection":  (0,         0,          0,          0,          0,          0,          0,          0,          0       ),
+            "MaterialSaturationM":          (519,       519,        519,        519,        519,        519,        519,        519,        519     ),
+            "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          0,          0       ),
+            "GammaCoefficient":             (0.86,      0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       0.86    ),
+            "InitPosition":                 (45.0,      -45.0,      45.0,       -45.0,      45.0,       -45.0,      45.0,       -45.0,      45.0    ),
+            "InitB":                        (0.75,      0.74,       0.75,       0.74,       0.75,       0.74,       0.75,       0.74,       0.75    ),
+            "LongRangeInteractionLength":   (0.3,       0.3,        0.3,        0.3,        0.3,        0.3,        0.3,        0.3,        0.3     ),
             "LongRangeExchangeFlag":         True,
             "InitPositionSingle":            10,
             "PeriodicBoundaryConditions":    False
@@ -119,9 +122,9 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     Hmin=0.001#338
     Hmax=1.0#1338
     Hsteps=32
-    Tmin=299 #10
-    Tmax=302#400
-    Tsteps=32
+    Tmin=300.9 #10
+    Tmax=300.9#400
+    Tsteps=1
     S=simulation(DeleteFlag=True,
                  DescendingCoefficient=2,
                  PathToFolder=PathToFolder,
@@ -130,8 +133,8 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
                  LongRangeExchange=LongRangeExchange,
                  NumberOfIterationM=50,
                  NumberOfIterationTheta=1,
-                 NumberOfSteps=1800)
-    S.mode(Debug=False)
+                 NumberOfSteps=600)
+    S.mode(Debug=True)
     file=S.GetMHvsT(
                     Hmin=Hmin,
                     Hmax=Hmax,
@@ -150,10 +153,10 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
 #f(PathToFolder="SAF RKKY J=-0.0018 l=0.15",StructureParameters=SAFParameters1,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.3
-#f(PathToFolder="SAF RKKY J=-0.0018 l=0.30",StructureParameters=SAFParameters2,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+#f(PathToFolder="SAF RKKY J=-0.0018 l=0.30 1-1",StructureParameters=SAFParameters2,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.45
-f(PathToFolder="x9 SAF RKKY J=-0.0018 l=0.45 fine",StructureParameters=SAFParameters5,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+f(PathToFolder="x9 SAF RKKY J=-0.0018 l=0.45 ref2",StructureParameters=SAFParameters5,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.6
 #f(PathToFolder="SAF RKKY J=-0.0018 l=0.60",StructureParameters=SAFParameters4,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)

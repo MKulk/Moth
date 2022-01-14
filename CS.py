@@ -1,4 +1,22 @@
-MultilayerParameters={
+CSParameter={
+            "MaterialThickness":            (0.3,       6.0,        0.3,    ),
+            "MLThickness":                  (0.15,      0.15,       0.15,   ),
+            "ZeemanThickness":              (13.0,      1.0,        20.0,   ),
+            "MaterialName":                 ("Py",      "FeCr",     "Py",   ),
+            "MaterialS":                    (1,         1,          1,      ),
+            "MaterialExtraField":           (0.2,       0,          0,      ),
+            "MaterialExtraFieldDirection":  (0,         0,          0,      ),
+            "MaterialSaturationM":          (1557,      519,        1557,   ),
+            "CurieTemperature":             (0,         0,          0,      ),
+            "GammaCoefficient":             (0.86,      0.86,       0.86,   ),
+            "InitPosition":                 (0.0,       0.0,       -45.0,   ),
+            "InitB":                        (0.9,       0.74,       0.9,    ),
+            "LongRangeInteractionLength":   (0.15,      2.0,        0.15,   ),
+            "LongRangeExchangeFlag":         True,
+            "InitPositionSingle":            10,
+            "PeriodicBoundaryConditions":    False
+            }
+MultilayerParametersold={
             "MaterialThickness":                (4,         6,          6   ),
             "MLThickness":                      (0.15,      0.15,       0.15),
             "MaterialName":                     ("Py",      "FeCr",     "Py"),
@@ -17,8 +35,8 @@ MultilayerParameters={
             }
 MaterialExchange={
             "Py-Py"     :0.23,
-            "Py-FeCr"   :0.23,
-            "FeCr-Py"   :0.23,
+            "Py-FeCr"   :0.076,
+            "FeCr-Py"   :0.076,
             "FeCr-FeCr" :0.023
             }
 LongRangeExchange={
@@ -26,26 +44,20 @@ LongRangeExchange={
             "FeCr-Py"  :0.0005
             }
 
-Hmin=-0.07#5
-Hmax=0.01
-Hsteps=32
 
-Tmin=1
-Tmax=300
-Tsteps=32
 
 from CalculationClass import simulation, timeit
 from viewer import reader
 # ctrl+shift+P: Debug Visualizer: New View
-@timeit
+
 @timeit
 def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     Hmin=-0.1#338
-    Hmax=0.05#1338
+    Hmax=0.1#1338
     Hsteps=32
     Tmin=1#10
     Tmax=300#400
-    Tsteps=16
+    Tsteps=3
     S=simulation(DeleteFlag=True,
                  DescendingCoefficient=2,
                  PathToFolder=PathToFolder,
@@ -54,7 +66,7 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
                  LongRangeExchange=LongRangeExchange,
                  NumberOfIterationM=50,
                  NumberOfIterationTheta=1,
-                 NumberOfSteps=1000)
+                 NumberOfSteps=1200)
     S.mode(Debug=False)
     file=S.GetMHvsT(
                     Hmin=Hmin,
@@ -68,4 +80,4 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     data.GetMHonT()
     data.GetMTonH()
 
-f(PathToFolder="saf test long range",StructureParameters=MultilayerParameters,StructureExchange=MaterialExchange,LongRangeExchange=LongRangeExchange)
+f(PathToFolder="CS test NO long range",StructureParameters=CSParameter,StructureExchange=MaterialExchange,LongRangeExchange=LongRangeExchange)

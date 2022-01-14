@@ -2,7 +2,7 @@
 SAFParameters5={
             "MaterialThickness":            (0.3,       1.2,        1.2,        0.3,        1.2,        1.2,        0.3,        ),
             "MLThickness":                  (0.15,      0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       ),
-            "ZeemanThickness":              (4.0,       1.0,        1.0,        4.0,        1.0,        1.0,        4.0,        ),
+            "ZeemanThickness":              (1.0,       1.0,        1.0,        1.0,        1.0,        1.0,        1.0,        ),
             "MaterialName":                 ("Fe",      "FeCr1",    "FeCr2",    "Fe",       "FeCr1",    "FeCr2",    "Fe",       ),
             "MaterialS":                    (1,         1,          1,          1,          1,          1,          1,          ),
             "MaterialExtraField":           (0,         0,          0,          0,          0,          0,          0,          ),
@@ -30,12 +30,12 @@ MaterialExchange={
             }
 #Tc=300K gamma=0.045
 RKKYExchange={
-            "FeCr1-FeCr2"  :-0.0018,
-            "FeCr1-Fe"     :-0.0018,
-            "FeCr2-FeCr1"  :-0.0018,
-            "FeCr2-Fe"     :-0.0018,
-            "Fe-FeCr1"     :-0.0018,
-            "Fe-FeCr2"     :-0.0018
+            "FeCr1-FeCr2"  :-0.0006,
+            "FeCr1-Fe"     :-0.0002,
+            "FeCr2-FeCr1"  :-0.0006,
+            "FeCr2-Fe"     :-0.0002,
+            "Fe-FeCr1"     :-0.0002,
+            "Fe-FeCr2"     :-0.0002
             }
 
 
@@ -45,11 +45,11 @@ from viewer import reader
 
 @timeit
 def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
-    Hmin=0.001#338
-    Hmax=1.0#1338
+    Hmin=-0.1#338
+    Hmax=0.5#1338
     Hsteps=32
-    Tmin=298 #10
-    Tmax=302#400
+    Tmin=296 #10
+    Tmax=316#400
     Tsteps=32
     S=simulation(DeleteFlag=True,
                  DescendingCoefficient=2,
@@ -59,7 +59,7 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
                  LongRangeExchange=LongRangeExchange,
                  NumberOfIterationM=50,
                  NumberOfIterationTheta=1,
-                 NumberOfSteps=1200)
+                 NumberOfSteps=2400)
     S.mode(Debug=False)
     file=S.GetMHvsT(
                     Hmin=Hmin,
@@ -82,7 +82,7 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
 #f(PathToFolder="SAF RKKY J=-0.0018 l=0.30 1-1",StructureParameters=SAFParameters2,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.45
-f(PathToFolder="1-3 SAF RKKY J=-0.0018 l=0.45 test 2400",StructureParameters=SAFParameters5,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+f(PathToFolder="1-3 SAF J_RKKY=5 proc l=0.45  2400 32x32 296-316",StructureParameters=SAFParameters5,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
 
 #Long range exchange length=0.6
 #f(PathToFolder="SAF RKKY J=-0.0018 l=0.60",StructureParameters=SAFParameters4,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)

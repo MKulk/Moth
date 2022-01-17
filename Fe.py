@@ -1,13 +1,13 @@
 MaterialExchange={
-            "Fe-Fe"   :0.1,
+            "Fe-Fe"       :0.3
             }
 RKKYExchange={
             "FeCr2-FeCr1"  :-0.0008,
             "FeCr1-FeCr2"  :-0.0008
             }
 
-FeCr_Parameters={
-            "MaterialThickness":            (1.2,  ),
+Fe_Parameters={
+            "MaterialThickness":            (0.3,   ),
             "MLThickness":                  (0.15,  ),
             "ZeemanThickness":              (1.0,   ),
             "MaterialName":                 ("Fe",  ),
@@ -36,7 +36,7 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     Hmax=1.000
     Hsteps=2
     Tmin=1
-    Tmax=1500
+    Tmax=2500
     Tsteps=128
     S=simulation(DeleteFlag=True,
                  DescendingCoefficient=2,
@@ -60,4 +60,4 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     data.GetMHonT()
     data.GetMTonH()
 
-f(PathToFolder="Fe debug",StructureParameters=FeCr_Parameters,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+f(PathToFolder="Fe 0.3 nm J=0.3 M=1557",StructureParameters=Fe_Parameters,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)

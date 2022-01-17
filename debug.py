@@ -1,5 +1,5 @@
 MaterialExchange={
-            "FeCr-FeCr"   :0.090,
+            "Fe-Fe"   :0.1,
             }
 RKKYExchange={
             "FeCr2-FeCr1"  :-0.0008,
@@ -10,11 +10,11 @@ FeCr_Parameters={
             "MaterialThickness":            (1.2,  ),
             "MLThickness":                  (0.15,  ),
             "ZeemanThickness":              (1.0,   ),
-            "MaterialName":                 ("FeCr",),
+            "MaterialName":                 ("Fe",  ),
             "MaterialS":                    (1,     ),
             "MaterialExtraField":           (0,     ),
             "MaterialExtraFieldDirection":  (0,     ),
-            "MaterialSaturationM":          (1500,   ),
+            "MaterialSaturationM":          (1557,  ),
             "CurieTemperature":             (0,     ),
             "GammaCoefficient":             (0.86,  ),
             "InitPosition":                 (0.0,   ),
@@ -32,7 +32,7 @@ from viewer import reader
 
 @timeit
 def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
-    Hmin=0.001
+    Hmin=0.0
     Hmax=1.000
     Hsteps=2
     Tmin=1
@@ -60,4 +60,4 @@ def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     data.GetMHonT()
     data.GetMTonH()
 
-f(PathToFolder="FeCr debug",StructureParameters=FeCr_Parameters,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)
+f(PathToFolder="Fe debug",StructureParameters=FeCr_Parameters,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)

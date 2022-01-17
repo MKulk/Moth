@@ -33,8 +33,8 @@ class simulation:
         self.StructureExchange=StructureExchange
         self.LongRangeExchange= LongRangeExchange
         self.PathToFolder = PathToFolder
-        self.PathToFolderMH=self.PathToFolder+"-MH"
-        self.PathToFolderMT=self.PathToFolder+"-MT"
+        #self.PathToFolderMH=self.PathToFolder#+"-MH"
+        #self.PathToFolderMT=self.PathToFolder+"-MT"
         self.NumberOfIterationTheta= NumberOfIterationTheta
         self.NumberOfSteps= NumberOfSteps
         self.NumberOfIterationM= NumberOfIterationM
@@ -43,20 +43,20 @@ class simulation:
         if DeleteFlag:
             if os.path.exists(self.PathToFolder) and os.path.isdir(self.PathToFolder):
                 shutil.rmtree(self.PathToFolder)
-            if os.path.exists(self.PathToFolderMH) and os.path.isdir(self.PathToFolderMH):
-                shutil.rmtree(self.PathToFolderMH)
-            if os.path.exists(self.PathToFolderMT) and os.path.isdir(self.PathToFolderMT):
-                shutil.rmtree(self.PathToFolderMT)
+            #if os.path.exists(self.PathToFolderMH) and os.path.isdir(self.PathToFolderMH):
+            #    shutil.rmtree(self.PathToFolderMH)
+            #if os.path.exists(self.PathToFolderMT) and os.path.isdir(self.PathToFolderMT):
+            #    shutil.rmtree(self.PathToFolderMT)
         Path(self.PathToFolder).mkdir(parents=True, exist_ok=True)
-        Path(self.PathToFolderMH).mkdir(parents=True, exist_ok=True)
-        Path(self.PathToFolderMT).mkdir(parents=True, exist_ok=True)
+        #Path(self.PathToFolderMH).mkdir(parents=True, exist_ok=True)
+        #Path(self.PathToFolderMT).mkdir(parents=True, exist_ok=True)
 
     
-    def GetMvsT(self,Tmin=1,Tmax=300,Tsteps=30,Hext=0.1):
-        temperature=np.linspace(Tmin,Tmax,Tsteps)
-        text="M(T)_profile"
-        Parallel(n_jobs=self.num_cores)(delayed(self.minimize)(TargetFolder=self.PathToFolderMT,Field=Hext,FieldDirection=0,Temperature=t,text=text) for t in temperature)
-        return 0
+    #def GetMvsT(self,Tmin=1,Tmax=300,Tsteps=30,Hext=0.1):
+    #    temperature=np.linspace(Tmin,Tmax,Tsteps)
+    #    text="M(T)_profile"
+    #    Parallel(n_jobs=self.num_cores)(delayed(self.minimize)(TargetFolder=self.PathToFolderMT,Field=Hext,FieldDirection=0,Temperature=t,text=text) for t in temperature)
+    #    return 0
 
     def mode(self,Debug=False):
         if Debug:
@@ -70,7 +70,7 @@ class simulation:
         Temperature =   np.linspace(Tmin,Tmax,Tsteps)
         result={}
         text="M(H)_profile"
-        data=Parallel(n_jobs=self.num_cores)(delayed(self.minimize)(TargetFolder=self.PathToFolderMH,Field=h,FieldDirection=FieldDirection,Temperature=t,text=text) for h in field for t in Temperature)
+        data=Parallel(n_jobs=self.num_cores)(delayed(self.minimize)(TargetFolder=self.PathToFolder,Field=h,FieldDirection=FieldDirection,Temperature=t,text=text) for h in field for t in Temperature)
         keys=list()
         for i in range(len(data)):
             CurrentKey=list(data[i].keys())[0]
@@ -93,7 +93,7 @@ class simulation:
         result["Tsteps"]    =   Tsteps
         now = datetime.now()
         current_time = now.strftime("%Y-%m-%d--%H-%M-%S")
-        filename=self.PathToFolder+" results "+current_time+".json"
+        filename=self.PathToFolder+" "+current_time+".json"
         with open(filename, 'w') as fout:
             json.dump(result, fout)
         return filename

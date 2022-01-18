@@ -19,14 +19,14 @@ SAFParameters5={
             }
 MaterialExchange={
             "FeCr1-FeCr1"   :0.029,
-            "FeCr1-FeCr2"   :-0.0014,
-            "FeCr1-Fe"      :-0.002,
+            "FeCr1-FeCr2"   :-0.0014*3.5,
+            "FeCr1-Fe"      :-0.002*3.5,
             "FeCr2-FeCr2"   :0.029,
-            "FeCr2-FeCr1"   :-0.0014,
-            "FeCr2-Fe"      :-0.002,
+            "FeCr2-FeCr1"   :-0.0014*3.5,
+            "FeCr2-Fe"      :-0.002*3.5,
             "Fe-Fe"         :0.300,
-            "Fe-FeCr1"      :-0.002,
-            "Fe-FeCr2"      :-0.002
+            "Fe-FeCr1"      :-0.002*3.5,
+            "Fe-FeCr2"      :-0.002*3.5
             }
 #Tc=300K gamma=0.045
 RKKYExchange={
@@ -47,10 +47,10 @@ from viewer import reader
 def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
     Hmin=0.0#338
     Hmax=0.1#1338
-    Hsteps=32
+    Hsteps=16
     Tmin=296 #10
     Tmax=316#400
-    Tsteps=32
+    Tsteps=16
     S=simulation(DeleteFlag=True,
                  DescendingCoefficient=2,
                  PathToFolder=PathToFolder,

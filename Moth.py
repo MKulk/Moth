@@ -5,7 +5,7 @@ import sys
 import os
 from termcolor import colored
 import importlib.util
-
+import logo
 
 
 
@@ -41,5 +41,5 @@ def Simulation():
     data=reader(file)
     data.GetMHonT()
     data.GetMTonH()
-
+print(logo.logo)
 Simulation()

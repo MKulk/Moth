@@ -2,7 +2,7 @@ import numpy as np
 import os
 from termcolor import colored
 import math
-import time
+
 
 
 
@@ -106,42 +106,6 @@ class multilayer:
                 if not np.all(cal==False):
                     self.TotalMask.append(cal)
                     tmp=np.logical_or(tmp,cal)
-        ################################   delete after testing   ################################
-        #pattern1 =np.array([True, False, False, False, False, False, False, False, False, False])
-        #pattern2 =np.array([False, True, False, False, False, False, False, False, False, False])
-        #pattern3 =np.array([False, False, True, False, False, False, False, False, False, False])
-        #pattern4 =np.array([False, False, False, True, False, False, False, False, False, False])
-        #pattern5 =np.array([False, False, False, False, True, False, False, False, False, False])
-        #pattern6 =np.array([False, False, False, False, False, True, False, False, False, False])
-        #pattern7 =np.array([False, False, False, False, False, False, True, False, False, False])
-        #pattern8 =np.array([False, False, False, False, False, False, False, True, False, False])
-        #pattern9 =np.array([False, False, False, False, False, False, False, False, True, False])
-        #pattern10=np.array([False, False, False, False, False, False, False, False, False, True])
-        #
-        #N=1+round(self.ThetaM.size/pattern1.size)
-        #repeat1 =np.tile(pattern1,N)
-        #repeat2 =np.tile(pattern2,N)
-        #repeat3 =np.tile(pattern3,N)
-        #repeat4 =np.tile(pattern4,N)
-        #repeat5 =np.tile(pattern5,N)
-        #repeat6 =np.tile(pattern6,N)
-        #repeat7 =np.tile(pattern7,N)
-        #repeat8 =np.tile(pattern8,N)
-        #repeat9 =np.tile(pattern9,N)
-        #repeat10=np.tile(pattern10,N)
-        #mask1 =repeat1[0:self.ThetaM.size]
-        #mask2 =repeat2[0:self.ThetaM.size]
-        #mask3 =repeat3[0:self.ThetaM.size]
-        #mask4 =repeat4[0:self.ThetaM.size]
-        #mask5 =repeat5[0:self.ThetaM.size]
-        #mask6 =repeat6[0:self.ThetaM.size]
-        #mask7 =repeat7[0:self.ThetaM.size]
-        #mask8 =repeat8[0:self.ThetaM.size]
-        #mask9 =repeat9[0:self.ThetaM.size]
-        #mask10=repeat10[0:self.ThetaM.size]
-        ##self.MaskSet=[mask1,mask2,mask3,mask3,mask2,mask1]
-        #self.MaskSet=[mask1,mask2,mask3,mask4,mask5,mask6,mask7,mask8, mask9, mask10]
-        ###################################        end        ####################################
         self.AllTrue=np.ones_like(self.LayerNumber)
         self.CalculateM()
         self.UpdateHeff()
@@ -292,7 +256,7 @@ class multilayer:
             BError=1e-2
             #TError=1e-5
             Bprecision=1e-7
-            Tprecision=1e-5
+            Tprecision=1e-6
             #if i>62:
             #    for s in range(self.B.size):
             #        print(i, s, self.B[s])

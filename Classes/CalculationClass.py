@@ -1,4 +1,4 @@
-from MLClass import multilayer
+from Classes.MLClass import multilayer
 import multiprocessing
 from joblib import Parallel, delayed
 import os

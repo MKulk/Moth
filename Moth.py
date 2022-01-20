@@ -1,11 +1,11 @@
-
-from CalculationClass import simulation, timeit
-from viewer import reader
+from Classes.CalculationClass import simulation, timeit
+from Classes.viewer import reader
 import sys
 import os
 from termcolor import colored
 import importlib.util
-import logo
+from Classes.logo import *
+
 
 
 
@@ -20,6 +20,7 @@ except ImportError:
 
 @timeit
 def Simulation():
+    print(logo)
     S=simulation(DeleteFlag             =   True,
                  DescendingCoefficient  =   2,
                  PathToFolder           =   configs.FolderName,
@@ -28,7 +29,7 @@ def Simulation():
                  LongRangeExchange      =   configs.LongRangeExchange,
                  NumberOfIterationM     =   50,
                  NumberOfIterationTheta =   1,
-                 NumberOfSteps=60)
+                 NumberOfSteps          =   configs.NumberOfSteps)
     S.mode(Debug=False)
     file=S.GetMHvsT(
                     Hmin            =   configs.Hmin,
@@ -41,5 +42,5 @@ def Simulation():
     data=reader(file)
     data.GetMHonT()
     data.GetMTonH()
-print(logo.logo)
+
 Simulation()

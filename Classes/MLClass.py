@@ -349,14 +349,18 @@ class multilayer:
         return 0
 
     def CalculateCHI(self):
-        J=self.MaterialS
+        S=self.MaterialS
         r=self.r
         T=self.Temperature
         #self.CHI=(r*J*self.Heff/T)+(3*Tc*J/(T*(J+1)))*self.B
         J=self.MaterialS
-        self.CHI=r*J*self.Heff/T 
+        self.CHI=r*S*self.Heff/T 
         return 0 
-
+    def CalculateCHIexperimental(self):
+        self.CHI=self.r*self.Heff/self.Temperature
+        return 0
+    def Brillouinexperimental(self):
+        self.B=np.tanh(self.B*self.CHI)
     def Brillouin(self):
         S=self.MaterialS
         self.B=((2*S+1)/(2*S))*self.coth(self.CHI*((2*S+1)/(2*S)))-(1/(2*S))*self.coth(self.CHI/(2*S))

@@ -1,5 +1,5 @@
 FolderName          =   "CS_direct_exchange_test_1"
-Hmin,Hmax,Hsteps    =   -0.3,      0.1,      32
+Hmin,Hmax,Hsteps    =   -0.22,      0.05,      64
 Tmin,Tmax,Tsteps    =   100,      300,    32
 NumberOfSteps       =   24000
 FieldDirection      =   0
@@ -18,7 +18,7 @@ StructureParameters={
             "InitPosition":                 (0.45,       0.0,       -45.0,   ),
             "InitB":                        (0.9,       0.74,       0.9,    ),
             "LongRangeInteractionLength":   (0.15,      0.15,        0.15,   ),
-            "LongRangeExchangeFlag":         True,
+            "LongRangeExchangeFlag":         False,
             "InitPositionSingle":            10,
             "PeriodicBoundaryConditions":    False
             }

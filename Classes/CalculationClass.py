@@ -28,7 +28,9 @@ def timeit(my_func):
     return timed
 
 class simulation:
-    def __init__(self,DeleteFlag=True,PathToFolder="temp",StructureParameters={},StructureExchange={},LongRangeExchange="none",NumberOfIterationM=35,NumberOfIterationTheta=100,NumberOfSteps=5000, DescendingCoefficient=0.02):
+    def __init__(self,DeleteFlag=True,PathToFolder="temp",StructureParameters={},StructureExchange={},
+                 LongRangeExchange="none",NumberOfIterationM=35,NumberOfIterationTheta=100,NumberOfSteps=5000,
+                 DescendingCoefficient=0.02, Acceleration=1.5):
         self.StructureParameters=StructureParameters
         self.StructureExchange=StructureExchange
         self.LongRangeExchange= LongRangeExchange
@@ -39,6 +41,7 @@ class simulation:
         self.NumberOfSteps= NumberOfSteps
         self.NumberOfIterationM= NumberOfIterationM
         self.DescendingCoefficient= DescendingCoefficient
+        self.Acceleration= Acceleration
         self.num_cores = multiprocessing.cpu_count()
         if DeleteFlag:
             if os.path.exists(self.PathToFolder) and os.path.isdir(self.PathToFolder):
@@ -147,11 +150,14 @@ class simulation:
                           LongRangeExchange=self.LongRangeExchange,
                           Temperature=Temperature,
                           Field=Field,
-                          FieldDirection=FieldDirection) #init system
+                          FieldDirection=FieldDirection,
+                          Acceleration=self.Acceleration) #init system
         system.InitCalculation(self.NumberOfIterationM,self.NumberOfIterationTheta,self.NumberOfSteps,self.DescendingCoefficient)
         system.SetExternalParameters(Field,FieldDirection,Temperature)
         system.IterateSystem()
-        self.SaveToFile(TargetFolder=TargetFolder,strA="H",A=Field,strB="T",B=Temperature,string=text,space=system.space,moment=system.M,angle=system.ThetaM)
+        self.SaveToFile(TargetFolder=TargetFolder,strA="H",A=Field,strB="T",
+                        B=Temperature,string=text,space=system.space,
+                        moment=system.M,angle=system.ThetaM)
         data=self.GrabData(SystemInstance=system,Temperature=Temperature,Field=Field)
         del system
         return data

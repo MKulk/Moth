@@ -9,6 +9,7 @@ from Classes.logo import *
 
 
 
+
 try:
     addr=os.getcwd()+"/"+sys.argv[1]
     print(addr)
@@ -29,7 +30,8 @@ def Simulation():
                  LongRangeExchange      =   configs.LongRangeExchange,
                  NumberOfIterationM     =   50,
                  NumberOfIterationTheta =   1,
-                 NumberOfSteps          =   configs.NumberOfSteps)
+                 NumberOfSteps          =   configs.NumberOfSteps,
+                 Acceleration           =   configs.Acceleration)
     S.mode(Debug=False)
     file=S.GetMHvsT(
                     Hmin            =   configs.Hmin,

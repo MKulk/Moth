@@ -3,6 +3,7 @@ Hmin,Hmax,Hsteps    =   -0.3,      0.1,      32
 Tmin,Tmax,Tsteps    =   100,      300,    32
 NumberOfSteps       =   24000
 FieldDirection      =   0
+Acceleration        =   1.0
 StructureParameters={
             "MaterialThickness":            (0.3,       6.0,        0.3,    ),
             "MLThickness":                  (0.15,      0.15,       0.15,   ),

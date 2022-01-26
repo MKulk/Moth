@@ -7,7 +7,8 @@ import math
 
 
 class multilayer:
-    def __init__(self,MaterialParameters,MaterialExchange,LongRangeExchange="none",Temperature=1,Field=1,FieldDirection=0):
+    def __init__(self,MaterialParameters,MaterialExchange,LongRangeExchange="none",Temperature=1,Field=1,FieldDirection=0, Acceleration=1.5):
+        self.Acceleration= Acceleration
         self.MaterialTotalThickness=np.sum(np.array(MaterialParameters["MaterialThickness"]))
         self.ExchangeTable                      =   MaterialExchange
         self.PeriodicBoundaryConditions         =   MaterialParameters["PeriodicBoundaryConditions"]
@@ -334,7 +335,7 @@ class multilayer:
                 shift[C1]=shift1[C1]
                 shift[C2]=shift2[C2]
                 shift[C3]=shift3[C3]
-                self.ThetaM[M]=self.ThetaM[M]+1.5*shift[M]
+                self.ThetaM[M]=self.ThetaM[M]+self.Acceleration*shift[M]
                 self.IterateMagnetisation()#not lower than 40!!!!11111
                 #print("time:", time.process_time() - start)
         self.NormalizeThetaM()

@@ -10,25 +10,17 @@ def converter():
           |      intralayer exchange interaction of the reference material      |
           +---------------------------------------------------------------------+
         """)
-    print("The saturation magnetisation of the reference material is:")
+    print("The saturation magnetisation of the reference material is: ", end='')
     Mref=float(input())
-    print("The saturation magnetisation of the neighbouring material is:")
+    print("The saturation magnetisation of the neighbouring material is: ", end='')
     M2=float(input())
-    print("The internal exchange of the reference material is:")
+    print("The internal exchange of the reference material is: ", end='')
     Jinternal=float(input())
-    print("The length (in monolayers) of the extemded decay is: (0 if the long range interaction is disabled)")
-    L=float(input())
-    print("The ratio of the interlayer exchange and intralayer exchange is: (in %)")
+    print("The ratio of the interlayer exchange and intralayer exchange is (in %): ", end='')
     n=float(input())
-    if L==0.0:
-        Jinterlayer=Jinternal*Mref*n/(100*M2)
-    else:
-        points=[]
-        z=0
-        while math.e**(-z/L)>0.01:
-            points.append(math.e**(-z/L))
-            print(z,math.e**(-z/L))
-            z+=1
+    Jinterlayer=Jinternal*Mref*n/(100*M2)
+    print("")
+    print("Jinterlayer={}".format(Jinterlayer))
             
         
 

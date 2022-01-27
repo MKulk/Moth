@@ -12,6 +12,7 @@ from Classes.logo import *
 
 try:
     addr=os.getcwd()+"/"+sys.argv[1]
+    target=sys.argv[2]
     print(addr)
     spec = importlib.util.spec_from_file_location("configs", addr)
     configs = importlib.util.module_from_spec(spec)
@@ -33,14 +34,23 @@ def Simulation():
                  NumberOfSteps          =   configs.NumberOfSteps,
                  Acceleration           =   configs.Acceleration)
     S.mode(Debug=False)
-    file=S.GetMHvsT(
-                    Hmin            =   configs.Hmin,
-                    Hmax            =   configs.Hmax,
-                    Hsteps          =   configs.Hsteps,
-                    Tmin            =   configs.Tmin,
-                    Tmax            =   configs.Tmax,
-                    Tsteps          =   configs.Tsteps,
-                    FieldDirection  =   configs.FieldDirection)
+    if target=="CPU" or target is None:
+        file,results=S.GetMHvsT_CPU(Hmin            =   configs.Hmin,
+                            Hmax            =   configs.Hmax,
+                            Hsteps          =   configs.Hsteps,
+                            Tmin            =   configs.Tmin,
+                            Tmax            =   configs.Tmax,
+                            Tsteps          =   configs.Tsteps,
+                            FieldDirection  =   configs.FieldDirection)
+    else:
+        file,results=S.GetMHvsT_CUDA(Hmin            =   configs.Hmin,
+                            Hmax            =   configs.Hmax,
+                            Hsteps          =   configs.Hsteps,
+                            Tmin            =   configs.Tmin,
+                            Tmax            =   configs.Tmax,
+                            Tsteps          =   configs.Tsteps,
+                            FieldDirection  =   configs.FieldDirection)
+    S.dump(file,results)
     data=reader(file)
     data.GetMHonT()
     data.GetMTonH()

@@ -12,6 +12,10 @@ import time
 import psutil
 from datetime import datetime
 import json
+try:
+    from numba import jit
+except ImportError:
+    print("no JIT for today")
 
 
 
@@ -42,6 +46,8 @@ class simulation:
         self.NumberOfIterationM= NumberOfIterationM
         self.DescendingCoefficient= DescendingCoefficient
         self.Acceleration= Acceleration
+        now = datetime.now()
+        self.current_time = now.strftime("%Y-%m-%d--%H-%M-%S")
         self.num_cores = multiprocessing.cpu_count()
         if DeleteFlag:
             if os.path.exists(self.PathToFolder) and os.path.isdir(self.PathToFolder):
@@ -68,7 +74,7 @@ class simulation:
             self.num_cores = multiprocessing.cpu_count()
 
     #*****************************************
-    def GetMHvsT(self,Hmin=-0.1,Hmax=0.1,Hsteps=32,Tmin=1, Tmax=1, Tsteps=32,FieldDirection=0.0001):
+    def GetMHvsT_CPU(self,Hmin=-0.1,Hmax=0.1,Hsteps=32,Tmin=1, Tmax=1, Tsteps=32,FieldDirection=0.0001):
         field       =   np.linspace(Hmin,Hmax,Hsteps)
         Temperature =   np.linspace(Tmin,Tmax,Tsteps)
         result={}
@@ -94,16 +100,48 @@ class simulation:
         result["Tmin"]      =   Tmin
         result["Tmax"]      =   Tmax
         result["Tsteps"]    =   Tsteps
-        now = datetime.now()
-        current_time = now.strftime("%Y-%m-%d--%H-%M-%S")
-        filename=self.PathToFolder+" "+current_time+".json"
-        with open(filename, 'w') as fout:
-            json.dump(result, fout)
-        return filename
-        
+        filename=self.PathToFolder+" "+self.current_time+".json"
+        return filename,result
+    
+    @jit()#lol of course this will not work
+    def GetMHvsT_CUDA(self,Hmin=-0.1,Hmax=0.1,Hsteps=32,Tmin=1, Tmax=1, Tsteps=32,FieldDirection=0.0001):
+        field       =   np.linspace(Hmin,Hmax,Hsteps)
+        Temperature =   np.linspace(Tmin,Tmax,Tsteps)
+        result={}
+        text="M(H)_profile"
+        data=[]
+        for h in field:
+            for t in Temperature:
+                data.append(self.minimize(TargetFolder=self.PathToFolder,Field=h,FieldDirection=FieldDirection,Temperature=t,text=text))
+        keys=list()
+        for i in range(len(data)):
+            CurrentKey=list(data[i].keys())[0]
+            if CurrentKey not in keys:
+                keys.append(CurrentKey)
+        tmp={}
+        for i in range(len(keys)):
+            tmp.update({keys[i]:{}})
+        for element in data:
+            for Tkey in keys:
+                if Tkey in list(element.keys()):
+                    for Hkey in list(element[Tkey].keys()):
+                        tmp[Tkey][Hkey]=element[Tkey][Hkey]
+        result=tmp
+        result["Hmin"]      =   Hmin
+        result["Hmax"]      =   Hmax
+        result["Hsteps"]    =   Hsteps
+        result["Tmin"]      =   Tmin
+        result["Tmax"]      =   Tmax
+        result["Tsteps"]    =   Tsteps
+
+        filename=self.PathToFolder+" "+self.current_time+".json"
+        return filename,result
  
 
-
+    def dump(self,filename,data):
+        with open(filename, 'w') as fout:
+            json.dump(data, fout)
+            
     def ProcessMvsT(self,TargetFolder):
         CurrentFolder=os.getcwd()
         mypath=os.path.join(CurrentFolder,TargetFolder)

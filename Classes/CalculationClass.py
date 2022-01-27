@@ -142,24 +142,25 @@ class simulation:
         M=M[SortingIndex]
         self.SaveToFileShort(TargetFolder,Filename="M-vs-H",DataX=H,DataY=M)
 
-        
-
-    def minimize(self,Field=0.1,FieldDirection=0,Temperature=1,text="profile",TargetFolder="tmp"):
-        system=multilayer(MaterialParameters=self.StructureParameters,
+    def minimize(self,Field=0.1,FieldDirection=0,Temperature=1,text="profile",TargetFolder="tmp", demo=False):
+        self.system=multilayer(MaterialParameters=self.StructureParameters,
                           MaterialExchange=self.StructureExchange,
                           LongRangeExchange=self.LongRangeExchange,
                           Temperature=Temperature,
                           Field=Field,
                           FieldDirection=FieldDirection,
                           Acceleration=self.Acceleration) #init system
-        system.InitCalculation(self.NumberOfIterationM,self.NumberOfIterationTheta,self.NumberOfSteps,self.DescendingCoefficient)
-        system.SetExternalParameters(Field,FieldDirection,Temperature)
-        system.IterateSystem()
-        self.SaveToFile(TargetFolder=TargetFolder,strA="H",A=Field,strB="T",
-                        B=Temperature,string=text,space=system.space,
-                        moment=system.M,angle=system.ThetaM)
-        data=self.GrabData(SystemInstance=system,Temperature=Temperature,Field=Field)
-        del system
+        self.system.InitCalculation(self.NumberOfIterationM,self.NumberOfIterationTheta,self.NumberOfSteps,self.DescendingCoefficient)
+        self.system.SetExternalParameters(Field,FieldDirection,Temperature)
+        if demo is not True:
+            self.system.IterateSystem()
+            self.SaveToFile(TargetFolder=TargetFolder,strA="H",A=Field,strB="T",
+                            B=Temperature,string=text,space=self.system.space,
+                            moment=self.system.M,angle=self.system.ThetaM)
+            data=self.GrabData(SystemInstance=self.system,Temperature=Temperature,Field=Field)
+            #del self.system
+        else:
+            data=0
         return data
 
     def GrabData(self,SystemInstance:multilayer,Temperature, Field):

@@ -207,8 +207,10 @@ class multilayer:
         return 0
     def UpdateHexN(self):
         #calculate direct exchange
-        Hex1            =   (self.Dot(self.M[self.Mim1],1,self.ThetaM[self.Mim1]-self.ThetaM,self.GammaM1)+self.Dot(self.M[self.Mip1],1,self.ThetaM[self.Mip1]-self.ThetaM,self.GammaP1))
-        Hex2            =   (self.Dot(self.M[self.Mim2],1,self.ThetaM[self.Mim2]-self.ThetaM,self.GammaM2)+self.Dot(self.M[self.Mip2],1,self.ThetaM[self.Mip2]-self.ThetaM,self.GammaP2))
+        Hex1            =   (self.Dot(self.M[self.Mim1],1,self.ThetaM[self.Mim1]-self.ThetaM,self.GammaM1)
+                             +self.Dot(self.M[self.Mip1],1,self.ThetaM[self.Mip1]-self.ThetaM,self.GammaP1))
+        Hex2            =   (self.Dot(self.M[self.Mim2],1,self.ThetaM[self.Mim2]-self.ThetaM,self.GammaM2)
+                             +self.Dot(self.M[self.Mip2],1,self.ThetaM[self.Mip2]-self.ThetaM,self.GammaP2))
         self.HexN       =   Hex1+Hex2
         if self.LongRangeExchangeFlag:
             LongRangeExchangeEnergy=np.zeros_like(self.M)
@@ -216,7 +218,8 @@ class multilayer:
                 if not self.NeighboursWeightZero[i]:
                     LongRangeExchangeEnergy[i]=0
                 else:
-                    LongRangeExchangeEnergy[i]=np.sum(self.Dot(self.M[self.NeighboursWeightMask[i]],1,self.ThetaM[self.NeighboursWeightMask[i]]-self.ThetaM[i],self.NeighboursWeight[i,self.NeighboursWeightMask[i]]))
+                    LongRangeExchangeEnergy[i]=np.sum(self.Dot(
+                        self.M[self.NeighboursWeightMask[i]],1,self.ThetaM[self.NeighboursWeightMask[i]]-self.ThetaM[i],self.NeighboursWeight[i,self.NeighboursWeightMask[i]]))
             self.LongRangeExchange       =   LongRangeExchangeEnergy #actually field but who cares
         return 0
 

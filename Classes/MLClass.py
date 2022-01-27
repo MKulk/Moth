@@ -188,14 +188,7 @@ class multilayer:
         self.NeighboursWeightMask=NeighboursWeight!=0
         self.NeighboursWeightZero=np.zeros(self.B.size,dtype=bool)
         for i in range(self.B.size):
-            self.NeighboursWeightZero[i]=np.any(self.NeighboursWeightMask[i])
-        
-        #for i in range(self.B.size):
-        #    for j in range(self.B.size):
-        #        print(i, j, self.NeighboursWeight[i,j])
-        #print("exit")
-        #import sys
-        #sys.exit()
+            self.NeighboursWeightZero[i]=np.any(self.NeighboursWeightMask[i])       
         return 0
 
     def CalculateM(self):
@@ -277,7 +270,7 @@ class multilayer:
                 s1="Exit by precision for: "
                 s2="T="+str(self.Temperature)
                 s3=" H="+str(self.Field)
-                s4=" after "+str(i)+" iterations"
+                s4=" after {} iterations".format(str(i))
                 print(colored(s1, 'blue'), colored(s2, 'red'),colored(s3, 'red'),colored(s4,'blue'))
                 printFlag=False
                 break

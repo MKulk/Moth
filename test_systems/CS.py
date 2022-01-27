@@ -18,7 +18,7 @@ StructureParameters={
             "InitPosition":                 (0.45,       0.0,       -45.0,   ),
             "InitB":                        (0.9,       0.74,       0.9,    ),
             "LongRangeInteractionLength":   (0.15,      0.15,        0.15,   ),
-            "LongRangeExchangeFlag":         False,
+            "LongRangeExchangeFlag":         True,
             "InitPositionSingle":            10,
             "PeriodicBoundaryConditions":    False
             }
@@ -30,6 +30,6 @@ MaterialExchange={
             }
 
 LongRangeExchange={
-            "Py-FeCr"  :0.0005,
-            "FeCr-Py"  :0.0005
+            "Py-FeCr"  :0.0076,
+            "FeCr-Py"  :0.0076
             }#not used here

@@ -34,6 +34,8 @@ def Simulation():
                  NumberOfSteps          =   configs.NumberOfSteps,
                  Acceleration           =   configs.Acceleration)
     S.mode(Debug=False)
+    #uncomment below to reject previous results
+    #S.UsePresolvedResults=False
     if target=="CPU" or target is None:
         file,results=S.GetMHvsT_CPU(Hmin            =   configs.Hmin,
                             Hmax            =   configs.Hmax,

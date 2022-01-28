@@ -12,6 +12,7 @@ import time
 import psutil
 from datetime import datetime
 import json
+from termcolor import colored
 
 try:
     from numba import jit
@@ -42,6 +43,7 @@ class simulation:
         self.StructureExchange=StructureExchange
         self.LongRangeExchange= LongRangeExchange
         self.PathToFolder = PathToFolder
+        self.UsePresolvedResults=True
         #self.PathToFolderMH=self.PathToFolder#+"-MH"
         #self.PathToFolderMT=self.PathToFolder+"-MT"
         self.NumberOfIterationTheta= NumberOfIterationTheta
@@ -183,7 +185,7 @@ class simulation:
         self.SaveToFileShort(TargetFolder,Filename="M-vs-H",DataX=H,DataY=M)
 
     def minimize(self,Field=0.1,FieldDirection=0,Temperature=1,text="M(H)_profile",TargetFolder="tmp", demo=False,iH=0,iT=0):
-        MPresolved,ThetaPresolved=self.GetPreviousResult(self,TargetFolder,iH,iT, text=text)
+        MPresolved,ThetaPresolved=self.GetPreviousResult(TargetFolder,iH,iT, text)
         self.system=multilayer(MaterialParameters=self.StructureParameters,
                           MaterialExchange=self.StructureExchange,
                           LongRangeExchange=self.LongRangeExchange,
@@ -266,11 +268,12 @@ class simulation:
             path, name = self.CreateName(TargetFolder=TargetFolder,strA="H",A=self.field[nH[i]],strB="T",B=self.Temperature[nT[i]],string=text)
             if name in SolutionFiles:
                 Names.append(name)
-        if Names:
+        if Names and self.UsePresolvedResults:
             Solution=Names[0]
             data=np.loadtxt(os.path.join(TargetFolder,Solution))
             Mpresolved=data[:,1]
             ThetaPresolved=data[:,2]
+            print(colored("The previously calculated data is going to be used: "+Solution,"yellow"))
         else:
             Mpresolved=None
             ThetaPresolved=None

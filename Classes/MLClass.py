@@ -74,7 +74,14 @@ class multilayer:
             #self.ThetaM     =   self.TranslateConstant(self.InitPositionSingle)#360*(0.5-np.random.rand(self.B.size))#
             self.ThetaM     =   np.copy(self.InitPosition)
         else:
+            self.B          =   np.copy(self.InitB)#self.TranslateConstant(1)
+            self.CHI        =   np.copy(self.InitB)#self.TranslateConstant(0.75)
+            #self.ThetaM     =   self.TranslateConstant(self.InitPositionSingle)#360*(0.5-np.random.rand(self.B.size))#
+            self.ThetaM     =   np.copy(self.InitPosition)
             DeconstructionMask=self.LayerConstructor(np.arange(self.B.size),self.ZeemanThickness)
+            for i in range(DeconstructionMask.size):
+                self.B[DeconstructionMask[i]]=PresolvedM[i]/self.MaterialSaturationM[DeconstructionMask[i]]
+                self.ThetaM[DeconstructionMask[i]]=PresolvedTheta[DeconstructionMask[i]]
         self.NumberOfIterationM = NumberOfIterationM
         self.NumberOfIterationTheta = NumberOfIterationTheta
         self.NumberOfSteps = NumberOfSteps

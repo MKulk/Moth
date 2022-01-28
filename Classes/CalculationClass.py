@@ -12,10 +12,13 @@ import time
 import psutil
 from datetime import datetime
 import json
+
 try:
     from numba import jit
+    numba_imported=True
 except ImportError:
     print("no JIT for today")
+    numba_imported=False
 
 
 
@@ -52,13 +55,7 @@ class simulation:
         if DeleteFlag:
             if os.path.exists(self.PathToFolder) and os.path.isdir(self.PathToFolder):
                 shutil.rmtree(self.PathToFolder)
-            #if os.path.exists(self.PathToFolderMH) and os.path.isdir(self.PathToFolderMH):
-            #    shutil.rmtree(self.PathToFolderMH)
-            #if os.path.exists(self.PathToFolderMT) and os.path.isdir(self.PathToFolderMT):
-            #    shutil.rmtree(self.PathToFolderMT)
         Path(self.PathToFolder).mkdir(parents=True, exist_ok=True)
-        #Path(self.PathToFolderMH).mkdir(parents=True, exist_ok=True)
-        #Path(self.PathToFolderMT).mkdir(parents=True, exist_ok=True)
 
     
     #def GetMvsT(self,Tmin=1,Tmax=300,Tsteps=30,Hext=0.1):
@@ -75,11 +72,15 @@ class simulation:
 
     #*****************************************
     def GetMHvsT_CPU(self,Hmin=-0.1,Hmax=0.1,Hsteps=32,Tmin=1, Tmax=1, Tsteps=32,FieldDirection=0.0001):
-        field       =   np.linspace(Hmin,Hmax,Hsteps)
-        Temperature =   np.linspace(Tmin,Tmax,Tsteps)
+        self.field       =   np.linspace(Hmin,Hmax,Hsteps)
+        self.Temperature =   np.linspace(Tmin,Tmax,Tsteps)
         result={}
         text="M(H)_profile"
-        data=Parallel(n_jobs=self.num_cores)(delayed(self.minimize)(TargetFolder=self.PathToFolder,Field=h,FieldDirection=FieldDirection,Temperature=t,text=text) for h in field for t in Temperature)
+        data=Parallel(n_jobs=self.num_cores)(delayed(self.minimize)(TargetFolder=self.PathToFolder,
+                                                                    Field=h,FieldDirection=FieldDirection,
+                                                                    Temperature=t,text=text,iH=i,iT=j) 
+                                             for i,h in enumerate(self.field) 
+                                             for j,t in enumerate(self.Temperature))
         keys=list()
         for i in range(len(data)):
             CurrentKey=list(data[i].keys())[0]
@@ -102,40 +103,41 @@ class simulation:
         result["Tsteps"]    =   Tsteps
         filename=self.PathToFolder+" "+self.current_time+".json"
         return filename,result
-    
-    @jit()#lol of course this will not work
-    def GetMHvsT_CUDA(self,Hmin=-0.1,Hmax=0.1,Hsteps=32,Tmin=1, Tmax=1, Tsteps=32,FieldDirection=0.0001):
-        field       =   np.linspace(Hmin,Hmax,Hsteps)
-        Temperature =   np.linspace(Tmin,Tmax,Tsteps)
-        result={}
-        text="M(H)_profile"
-        data=[]
-        for h in field:
-            for t in Temperature:
-                data.append(self.minimize(TargetFolder=self.PathToFolder,Field=h,FieldDirection=FieldDirection,Temperature=t,text=text))
-        keys=list()
-        for i in range(len(data)):
-            CurrentKey=list(data[i].keys())[0]
-            if CurrentKey not in keys:
-                keys.append(CurrentKey)
-        tmp={}
-        for i in range(len(keys)):
-            tmp.update({keys[i]:{}})
-        for element in data:
-            for Tkey in keys:
-                if Tkey in list(element.keys()):
-                    for Hkey in list(element[Tkey].keys()):
-                        tmp[Tkey][Hkey]=element[Tkey][Hkey]
-        result=tmp
-        result["Hmin"]      =   Hmin
-        result["Hmax"]      =   Hmax
-        result["Hsteps"]    =   Hsteps
-        result["Tmin"]      =   Tmin
-        result["Tmax"]      =   Tmax
-        result["Tsteps"]    =   Tsteps
-
-        filename=self.PathToFolder+" "+self.current_time+".json"
-        return filename,result
+    if numba_imported is True:
+        @jit()#lol of course this will not work
+        def GetMHvsT_CUDA(self,Hmin=-0.1,Hmax=0.1,Hsteps=32,Tmin=1, Tmax=1, Tsteps=32,FieldDirection=0.0001):
+            self.field       =   np.linspace(Hmin,Hmax,Hsteps)
+            self.Temperature =   np.linspace(Tmin,Tmax,Tsteps)
+            result={}
+            text="M(H)_profile"
+            data=[]
+            for h in self.field:
+                for t in self.Temperature:
+                    data.append(self.minimize(TargetFolder=self.PathToFolder,Field=h,FieldDirection=FieldDirection,Temperature=t,text=text))
+            keys=list()
+            for i in range(len(data)):
+                CurrentKey=list(data[i].keys())[0]
+                if CurrentKey not in keys:
+                    keys.append(CurrentKey)
+            tmp={}
+            for i in range(len(keys)):
+                tmp.update({keys[i]:{}})
+            for element in data:
+                for Tkey in keys:
+                    if Tkey in list(element.keys()):
+                        for Hkey in list(element[Tkey].keys()):
+                            tmp[Tkey][Hkey]=element[Tkey][Hkey]
+            result=tmp
+            result["Hmin"]      =   Hmin
+            result["Hmax"]      =   Hmax
+            result["Hsteps"]    =   Hsteps
+            result["Tmin"]      =   Tmin
+            result["Tmax"]      =   Tmax
+            result["Tsteps"]    =   Tsteps
+            filename=self.PathToFolder+" "+self.current_time+".json"
+            return filename,result
+    else:
+        print("GPU computation is not supported")
  
 
     def dump(self,filename,data):
@@ -180,7 +182,8 @@ class simulation:
         M=M[SortingIndex]
         self.SaveToFileShort(TargetFolder,Filename="M-vs-H",DataX=H,DataY=M)
 
-    def minimize(self,Field=0.1,FieldDirection=0,Temperature=1,text="profile",TargetFolder="tmp", demo=False):
+    def minimize(self,Field=0.1,FieldDirection=0,Temperature=1,text="M(H)_profile",TargetFolder="tmp", demo=False,iH=0,iT=0):
+        MPresolved,ThetaPresolved=self.GetPreviousResult(self,TargetFolder,iH,iT, text=text)
         self.system=multilayer(MaterialParameters=self.StructureParameters,
                           MaterialExchange=self.StructureExchange,
                           LongRangeExchange=self.LongRangeExchange,
@@ -188,7 +191,12 @@ class simulation:
                           Field=Field,
                           FieldDirection=FieldDirection,
                           Acceleration=self.Acceleration) #init system
-        self.system.InitCalculation(self.NumberOfIterationM,self.NumberOfIterationTheta,self.NumberOfSteps,self.DescendingCoefficient)
+        self.system.InitCalculation(NumberOfIterationM=self.NumberOfIterationM,
+                                    NumberOfIterationTheta=self.NumberOfIterationTheta,
+                                    NumberOfSteps=self.NumberOfSteps,
+                                    DescendingCoefficient=self.DescendingCoefficient,
+                                    PresolvedM=MPresolved,
+                                    PresolvedTheta=ThetaPresolved)
         self.system.SetExternalParameters(Field,FieldDirection,Temperature)
         if demo is not True:
             self.system.IterateSystem()
@@ -234,8 +242,52 @@ class simulation:
         return 0
 
     def SaveToFile(self,TargetFolder,strA,A,strB,B,string,space,moment,angle):
-        name=strA+"="+str(round(A, 6))+"_"+strB+"="+str(round(B, 2))+"_"+string+".txt"
-        path = os.path.join(TargetFolder,name)
+        path,name=self.CreateName(TargetFolder,strA,A,strB,B,string)
         e=np.stack((space, moment, angle), axis=-1)
         np.savetxt(path, e, fmt='%.18e')
         return 0
+    def CreateName(self,TargetFolder,strA,A,strB,B,string):
+        name=strA+"="+str(round(A, 6))+"_"+strB+"="+str(round(B, 2))+"_"+string+".txt"
+        path = os.path.join(TargetFolder,name)
+        return path, name
+    
+    def GetPreviousResult(self,TargetFolder,iH,iT,text):
+        CurrentFolder=os.getcwd()
+        SolutionsFolder=os.path.join(CurrentFolder,TargetFolder)
+        SolutionFiles = [f for f in listdir(SolutionsFolder) if isfile(join(SolutionsFolder, f))]
+        neighboursH=np.array([-1,0,-1,-2,0,-2,-1,-2])
+        neighboursT=np.array([0,-1,-1,0,-2,-1,-2,-2])
+        nH=iH+neighboursH
+        nT=iT+neighboursT
+        nH[nH<0]=0
+        nT[nT<0]=0
+        Names=[]
+        for i in range(nH.size):
+            path, name = self.CreateName(TargetFolder=TargetFolder,strA="H",A=self.field[nH[i]],strB="T",B=self.Temperature[nT[i]],string=text)
+            if name in SolutionFiles:
+                Names.append(name)
+        if Names:
+            Solution=Names[0]
+            data=np.loadtxt(os.path.join(TargetFolder,Solution))
+            Mpresolved=data[:,1]
+            ThetaPresolved=data[:,2]
+        else:
+            Mpresolved=None
+            ThetaPresolved=None
+        
+        
+        #H=np.zeros(len(onlyfiles))
+        #M=np.zeros(len(onlyfiles))
+        #theta=np.zeros(len(onlyfiles))
+        #for i,file in enumerate(onlyfiles):
+        #    H[i]=float(file.split("H=")[1].split("_")[0])
+        #    data=np.loadtxt(os.path.join(TargetFolder,file))
+        #    m=data[:,1]
+        #    t=data[:,2]
+        #    M[i]=np.average(m*np.cos(np.radians(t)))
+        #SortingIndex=np.argsort(H)
+        #H=H[SortingIndex]
+        #M=M[SortingIndex]
+        #self.SaveToFileShort(TargetFolder,Filename="M-vs-H",DataX=H,DataY=M)
+
+        return Mpresolved,ThetaPresolved

@@ -20,7 +20,7 @@ except ImportError:
     sys.exit(colored("Something is wrong with the name or location of the config file",'red'))
 
 def GetExchangeProfile():
-    S=simulation(DeleteFlag             =   True,
+    S=simulation(DeleteFlag             =   False,
                  DescendingCoefficient  =   2,
                  PathToFolder           =   configs.FolderName,
                  StructureParameters    =   configs.StructureParameters,

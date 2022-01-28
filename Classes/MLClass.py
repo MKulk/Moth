@@ -61,11 +61,20 @@ class multilayer:
             self.FieldDirection                 =   FieldDirection
         self.Temperature = Temperature
 
-    def InitCalculation(self,NumberOfIterationM=5,NumberOfIterationTheta=100,NumberOfSteps=500,DescendingCoefficient=4):
-        self.B          =   np.copy(self.InitB)#self.TranslateConstant(1)
-        self.CHI        =   np.copy(self.InitB)#self.TranslateConstant(0.75)
-        #self.ThetaM     =   self.TranslateConstant(self.InitPositionSingle)#360*(0.5-np.random.rand(self.B.size))#
-        self.ThetaM     =   np.copy(self.InitPosition)
+    def InitCalculation(self,NumberOfIterationM=5,
+                        NumberOfIterationTheta=100,
+                        NumberOfSteps=500,
+                        DescendingCoefficient=4,
+                        PresolvedM=None,
+                        PresolvedTheta=None):
+        #initialize magnetisation and orientation
+        if PresolvedM is None or PresolvedTheta is None:
+            self.B          =   np.copy(self.InitB)#self.TranslateConstant(1)
+            self.CHI        =   np.copy(self.InitB)#self.TranslateConstant(0.75)
+            #self.ThetaM     =   self.TranslateConstant(self.InitPositionSingle)#360*(0.5-np.random.rand(self.B.size))#
+            self.ThetaM     =   np.copy(self.InitPosition)
+        else:
+            DeconstructionMask=self.LayerConstructor(np.arange(self.B.size),self.ZeemanThickness)
         self.NumberOfIterationM = NumberOfIterationM
         self.NumberOfIterationTheta = NumberOfIterationTheta
         self.NumberOfSteps = NumberOfSteps
@@ -194,10 +203,12 @@ class multilayer:
     def CalculateM(self):
         self.M=self.MaterialSaturationM*self.B
         return 0
+
     def UpdateHexi(self):
         #effective field calculaion. Not sure about the volume normalization
         self.Hexi       =   self.Dot(self.M,1,0,self.Gamma)#self exchange
         return 0
+
     def UpdateHexN(self):
         #calculate direct exchange
         Hex1            =   (self.Dot(self.M[self.Mim1],1,self.ThetaM[self.Mim1]-self.ThetaM,self.GammaM1)
@@ -221,11 +232,13 @@ class multilayer:
         self.Hezz       =   self.Dot(self.Field,1,self.ThetaM-self.FieldDirection,1)+self.Dot(self.MaterialExtraField,1,self.ThetaM-self.MaterialExtraFieldDirection,1)
         self.Hezz       =   self.Hezz*self.ZeemanThickness
         return 0
+
     def UpdateHeff(self):
         self.UpdateHexi()
         self.UpdateHexN()
         self.UpdateHzz()
         self.Heff=self.Hezz+self.Hexi+self.HexN+self.LongRangeExchange
+
     def IterateMagnetisation(self,Number=0):
         if Number==0:
             Number=self.NumberOfIterationM
@@ -235,6 +248,7 @@ class multilayer:
             self.CalculateCHI()
             self.CalculateM()
         self.UpdateHeff()
+
     def IterateSystem(self):
         self.delta=np.ones_like(self.ThetaM)*self.DescendingCoefficient
         self.delta=self.DescendingCoefficient
@@ -286,8 +300,6 @@ class multilayer:
             print(colored(s1, 'blue'), colored(s2, 'red'),colored(s3, 'red'))
         self.PrepareData()
         
-
-
     def MinimizeOrientation(self):
         for i in range(1):
             for M in self.TotalMask:
@@ -370,10 +382,12 @@ class multilayer:
             arr=np.full(int(N[i]),data[i])
             result=np.append(result,arr)
         return result
+
     def PrepareData(self):
         self.M      =   self.LayerConstructor(self.M,self.ZeemanThickness)
         self.ThetaM =   self.LayerConstructor(self.ThetaM,self.ZeemanThickness)
         self.space  =   self.PresentedSpace
+
     def TranslateConstant(self,const):
         return np.full(self.MaterialName.shape,const,dtype=float)
 
@@ -383,62 +397,39 @@ class multilayer:
         CombinationNamesM=np.core.defchararray.add(self.MaterialName, "-")
         CombinationNamesM=np.core.defchararray.add(CombinationNamesM, tmp)
         GammaM1 =np.zeros_like(self.MaterialName,dtype=float)
-        #RKKYM1  =np.zeros_like(self.MaterialName,dtype=float)
         for i in range(GammaM1.size):
             GammaM1[i]=self.ExchangeTable[CombinationNamesM[i]]
-            #if self.RKKYactive:
-            #    if CombinationNamesM[i] in self.RKKYExchangeTable:
-            #        RKKYM1[i]=self.RKKYExchangeTable[CombinationNamesM[i]]
-
         if not self.PeriodicBoundaryConditions:
             GammaM1[0]=0
-            #RKKYM1[0]=0
         #define i-2 element
         tmp = np.roll(self.MaterialName,2)
         CombinationNamesM=np.core.defchararray.add(self.MaterialName, "-")
         CombinationNamesM=np.core.defchararray.add(CombinationNamesM, tmp)
         GammaM2=np.zeros_like(self.MaterialName,dtype=float)
-        #RKKYM2  =np.zeros_like(self.MaterialName,dtype=float)
         for i in range(GammaM2.size):
             GammaM2[i]=self.ExchangeTable[CombinationNamesM[i]]
-            #if self.RKKYactive:
-            #    if CombinationNamesM[i] in self.RKKYExchangeTable:
-            #        RKKYM2[i]=self.RKKYExchangeTable[CombinationNamesM[i]]
         if not self.PeriodicBoundaryConditions:
             GammaM2[0]=0
             GammaM2[1]=0
-            #RKKYM2[0]=0
-            #RKKYM2[1]=0
         #define i+1 element
         tmp = np.roll(self.MaterialName,-1)
         CombinationNamesP=np.core.defchararray.add(self.MaterialName, "-")
         CombinationNamesP=np.core.defchararray.add(CombinationNamesP, tmp)
         GammaP1=np.zeros_like(self.MaterialName,dtype=float)
-        #RKKYP1  =np.zeros_like(self.MaterialName,dtype=float)
         for i in range(GammaP1.size):
             GammaP1[i]=self.ExchangeTable[CombinationNamesP[i]]
-            #if self.RKKYactive:
-            #    if CombinationNamesP[i] in self.RKKYExchangeTable:
-            #        RKKYP1[i]=self.RKKYExchangeTable[CombinationNamesP[i]]
         if not self.PeriodicBoundaryConditions:
             GammaP1[-1]=0
-            #RKKYP1[-1]=0
         #define i+2 element
         tmp = np.roll(self.MaterialName,-2)
         CombinationNamesP=np.core.defchararray.add(self.MaterialName, "-")
         CombinationNamesP=np.core.defchararray.add(CombinationNamesP, tmp)
         GammaP2=np.zeros_like(self.MaterialName,dtype=float)
-        #RKKYP2  =np.zeros_like(self.MaterialName,dtype=float)
         for i in range(GammaP2.size):
             GammaP2[i]=self.ExchangeTable[CombinationNamesP[i]]
-            #if self.RKKYactive:
-            #    if CombinationNamesP[i] in self.RKKYExchangeTable:
-            #        RKKYP2[i]=self.RKKYExchangeTable[CombinationNamesP[i]]
         if not self.PeriodicBoundaryConditions:
             GammaP2[-1]=0
             GammaP2[-2]=0
-            #RKKYP2[-1]=0
-            #RKKYP2[-2]=0
         #define i element
         CombinationNames=np.core.defchararray.add(self.MaterialName, "-")
         CombinationNames=np.core.defchararray.add(CombinationNames, self.MaterialName)
@@ -450,10 +441,6 @@ class multilayer:
         self.GammaM2=GammaM2*1
         self.GammaP1=4*GammaP1/self.GammaCoeff
         self.GammaP2=GammaP2*1
-        #self.RKKYM1=4*RKKYM1/self.GammaCoeff
-        #self.RKKYM2=RKKYM2*1
-        #self.RKKYP1=4*RKKYP1/self.GammaCoeff
-        #self.RKKYP2=RKKYP2*1
         return 0
 
     def coth(self,arg):

@@ -4,6 +4,7 @@ Tmin,Tmax,Tsteps    =   100,      300,    32
 NumberOfSteps       =   24000
 FieldDirection      =   0
 Acceleration        =   1.0
+DeleteFlag          =   False
 StructureParameters={
             "MaterialThickness":            (0.3,       6.0,        0.3,    ),
             "MLThickness":                  (0.15,      0.15,       0.15,   ),

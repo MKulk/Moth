@@ -12,8 +12,10 @@ from Classes.logo import *
 
 try:
     addr=os.getcwd()+"/"+sys.argv[1]
-    target=sys.argv[2]
-    print(addr)
+    try:
+        target=sys.argv[2]
+    except:
+        terget=None
     spec = importlib.util.spec_from_file_location("configs", addr)
     configs = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(configs)
@@ -23,7 +25,12 @@ except ImportError:
 @timeit
 def Simulation():
     print(logo)
-    S=simulation(DeleteFlag             =   True,
+    DeleteFlag=True
+    try:
+        DeleteFlag=configs.DeleteFlag
+    except AttributeError:
+        DeleteFlag=True
+    S=simulation(DeleteFlag             =   DeleteFlag,
                  DescendingCoefficient  =   2,
                  PathToFolder           =   configs.FolderName,
                  StructureParameters    =   configs.StructureParameters,

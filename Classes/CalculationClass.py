@@ -257,8 +257,8 @@ class simulation:
         CurrentFolder=os.getcwd()
         SolutionsFolder=os.path.join(CurrentFolder,TargetFolder)
         SolutionFiles = [f for f in listdir(SolutionsFolder) if isfile(join(SolutionsFolder, f))]
-        neighboursH=np.array([-1,0,-1,-2,0,-2,-1,-2])
-        neighboursT=np.array([0,-1,-1,0,-2,-1,-2,-2])
+        neighboursH=np.array([0,-1,0,-1,-2,0,-2,-1,-2])
+        neighboursT=np.array([0,0,-1,-1,0,-2,-1,-2,-2])
         nH=iH+neighboursH
         nT=iT+neighboursT
         nH[nH<0]=0

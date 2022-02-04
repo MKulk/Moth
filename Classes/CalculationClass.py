@@ -277,20 +277,4 @@ class simulation:
         else:
             Mpresolved=None
             ThetaPresolved=None
-        
-        
-        #H=np.zeros(len(onlyfiles))
-        #M=np.zeros(len(onlyfiles))
-        #theta=np.zeros(len(onlyfiles))
-        #for i,file in enumerate(onlyfiles):
-        #    H[i]=float(file.split("H=")[1].split("_")[0])
-        #    data=np.loadtxt(os.path.join(TargetFolder,file))
-        #    m=data[:,1]
-        #    t=data[:,2]
-        #    M[i]=np.average(m*np.cos(np.radians(t)))
-        #SortingIndex=np.argsort(H)
-        #H=H[SortingIndex]
-        #M=M[SortingIndex]
-        #self.SaveToFileShort(TargetFolder,Filename="M-vs-H",DataX=H,DataY=M)
-
         return Mpresolved,ThetaPresolved

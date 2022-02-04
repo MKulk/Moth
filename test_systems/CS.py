@@ -1,10 +1,11 @@
-FolderName          =   "CS_L=1nm_J=1proc"
-Hmin,Hmax,Hsteps    =   -0.3,      0.1,      64
-Tmin,Tmax,Tsteps    =   100,      300,    32
+FolderName          =   "CS_reuse"
+Hmin,Hmax,Hsteps    =   -0.3,      0.1,      16
+Tmin,Tmax,Tsteps    =   300,      300,    1
 NumberOfSteps       =   24000
 FieldDirection      =   0
 Acceleration        =   1.0
 DeleteFlag          =   False
+ReusePreviousResults=   True
 StructureParameters={
             "MaterialThickness":            (0.3,       6.0,        0.3,    ),
             "MLThickness":                  (0.15,      0.15,       0.15,   ),

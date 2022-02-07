@@ -1,11 +1,11 @@
-FolderName          =   "CS_reuse"
-Hmin,Hmax,Hsteps    =   -0.3,      0.1,      16
-Tmin,Tmax,Tsteps    =   300,      300,    1
+FolderName          =   "CS_L=6.0_J=5_proc"
+Hmin,Hmax,Hsteps    =   -0.21,      0.1,      32
+Tmin,Tmax,Tsteps    =   150,      300,    15
 NumberOfSteps       =   24000
 FieldDirection      =   0
-Acceleration        =   1.0
-DeleteFlag          =   False
-ReusePreviousResults=   True
+Acceleration        =   1.5
+DeleteFlag          =   True
+ReusePreviousResults=   False
 StructureParameters={
             "MaterialThickness":            (0.3,       6.0,        0.3,    ),
             "MLThickness":                  (0.15,      0.15,       0.15,   ),
@@ -17,9 +17,9 @@ StructureParameters={
             "MaterialSaturationM":          (800,       519,        800,    ),
             "CurieTemperature":             (0,         0,          0,      ),
             "GammaCoefficient":             (0.86,      0.86,       0.86,   ),
-            "InitPosition":                 (90.0,      90.0,       90.0,   ),
+            "InitPosition":                 (80.0,      80.0,       80.0,   ),
             "InitB":                        (0.9,       0.74,       0.9,    ),
-            "LongRangeInteractionLength":   (0.15,      1.0,        0.15,   ),
+            "LongRangeInteractionLength":   (0.15,      6.0,        0.15,   ),
             "LongRangeExchangeFlag":         True,
             "InitPositionSingle":            10,
             "PeriodicBoundaryConditions":    False
@@ -32,6 +32,6 @@ MaterialExchange={
             }
 
 LongRangeExchange={
-            "Py-FeCr"  :0.00015,
-            "FeCr-Py"  :0.00015
-            }#not used here
+            "Py-FeCr"  :0.00115,
+            "FeCr-Py"  :0.00115
+            }

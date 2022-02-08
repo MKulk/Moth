@@ -21,6 +21,9 @@ def get_parameters(path):
         global max_m
         max_m=np.max(m)
         number_of_layers=s.size
+        print("=============================================================")
+        print("H index range: 0"+"..."+str(fields.size)+" H value range: "+str(fields[0])+"..."+str(fields[-1]))
+        print("T index range: 0"+"..."+str(temps.size)+" T value range: "+str(temps[0])+"..."+str(temps[-1]))
         return fields,temps,number_of_layers 
 def compose_name(field_i,temp_i):
     name="H="+str(field_i)+"_T="+str(temp_i)+"_M(H)_profile.txt"
@@ -37,7 +40,7 @@ def select_specific(set_to_select):
                 o.select_set(True)
     return 0
 
-def create_arrows(number):
+def create_arrows(number,magnitude,angle):
     arrow_length=5
     head_length=1
     names=[]
@@ -69,6 +72,9 @@ def create_arrows(number):
         bpy.ops.object.join()
         bpy.ops.object.origin_set(type='ORIGIN_CURSOR', center='MEDIAN')
         bpy.context.object.location[0] = d/2
+        bpy.context.object.rotation_euler[0] = angle[d]*3.14/180
+        bpy.context.object.scale[2] = magnitude[d]/max_m
+
         names.append(bpy.context.object.name)
     arrow_names=names
     return arrow_names
@@ -98,15 +104,23 @@ def create_description(h_value,t_value):
                                 use_proportional_connected=False,
                                 use_proportional_projected=False,
                                 release_confirm=True)
-
-    bpy.context.object.location[0] = -5.3
-    bpy.context.object.location[1] = -0.87
+    bpy.ops.object.select_all(action='DESELECT')
+    select_specific([d_name])
+    bpy.ops.object.delete(use_global=False, confirm=False)
+    #bpy.ops.object.select_all(action='DESELECT')
     
 
 
     text_name=None
     return text_name
 def modify_description(text_name,h_text,t_text):
+    text_name="Description"
+    select_specific([text_name])
+    ursor = 2
+    new_char = 'z'
+    ob = bpy.context.scene.objects[text_name]
+    text = ob.data.body
+    ob.data.body = text[:cursor] + new_char + text[cursor:]
     #select descriprion text
     #edit description text
     #set key
@@ -120,23 +134,29 @@ def modify_arrows(names,magnitudes,orientations):
         a=1
     return 0
 
-def go_through_files_H_T(path):
+def go_through_files_H_T(path,h_index,t_index):
     fields,temps,number_of_layers=get_parameters(path)
-    arrows      =   create_arrows(number_of_layers)
-    description =   create_description("H=0","T=0")
-    for i,t in enumerate(temps):
-        for j,h in enumerate(fields):
-            modify_description(description,h,t)
-            file_name=compose_name(h,t)
-            space, magnitude, angle = read_state(path+os.path.sep+file_name)
-            modify_arrows(arrows, magnitude, angle)
+    #description =   create_description("H=0","T=0")
+    h=fields[h_index]
+    t=temps[t_index]
+    file_name=compose_name(h,t)
+    space, magnitude, angle = read_state(path+os.path.sep+file_name)
+    arrows      =   create_arrows(number_of_layers, magnitude, angle)
+    #for i,t in enumerate(temps):
+    #   for j,h in enumerate(fields):
+    #        #modify_description(description,h,t)
+    #        file_name=compose_name(h,t)
+    #        space, magnitude, angle = read_state(path+os.path.sep+file_name)
+    #        modify_arrows(arrows, magnitude, angle)
 
+def clear():
+    for o in bpy.data.objects:
+        o.select_set(True)
+    bpy.ops.object.delete()
+    
+path="C:\Dropbox\KTH data\WIP\high priority\Direct observation of MC effect\Moth_sim\CS-search\CS_L=6.0_J=5_proc"
+h_index=16
+t_index=7
+clear()
+go_through_files_H_T(path,h_index,t_index)
 
-
-
-
-
-
-path="C:\Dropbox\KTH data\WIP\high priority\Layered Model bare system\Multilayer-simulation\CS_L=0.15nm_J=1proc"
-#go_through_files_H_T(path)
-create_description(0.125258,300.0)

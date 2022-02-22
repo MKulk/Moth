@@ -8,9 +8,9 @@ import os
 
 
 try:
-    file = "C:/Users/Mykola/Documents/GitHub/Multilayer-simulation/testdata.json"
+    file = sys.argv[1]
     try:
-        materials=["FeCr1"]
+        materials=list(sys.argv[2].split(','))
     except:
         print("no materila argument provided! Why are you even using it then?")
         os.exit(1)

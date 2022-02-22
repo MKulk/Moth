@@ -391,9 +391,10 @@ class multilayer:
         return result
 
     def PrepareData(self):
-        self.M      =   self.LayerConstructor(self.M,self.ZeemanThickness)
-        self.ThetaM =   self.LayerConstructor(self.ThetaM,self.ZeemanThickness)
-        self.space  =   self.PresentedSpace
+        self.M              =   self.LayerConstructor(self.M,self.ZeemanThickness)
+        self.ThetaM         =   self.LayerConstructor(self.ThetaM,self.ZeemanThickness)
+        self.MaterialName   =   self.LayerConstructor(self.MaterialName,self.ZeemanThickness)
+        self.space          =   self.PresentedSpace
 
     def TranslateConstant(self,const):
         return np.full(self.MaterialName.shape,const,dtype=float)

@@ -1,11 +1,11 @@
 FolderName          =   "Demo-profiles" #Name of the subfolder to dump profiles of the magnetization of the system
                                         # at each point of field and temperature
                                         
-Hmin,Hmax,Hsteps    =   0,      1,      2 #Minimum field [T], maximum field [T], number of steps in filed.
+Hmin,Hmax,Hsteps    =   -0.15,   0.15,   96 #Minimum field [T], maximum field [T], number of steps in filed.
 
 FieldDirection      =   0 # Direction of the external magnetic field [deg]
 
-Tmin,Tmax,Tsteps    =   10,     300,    2 #Minimum temperature [K], maximum temperature [K], number of steps in temperature .
+Tmin,Tmax,Tsteps    =   320,     320,    1 #Minimum temperature [K], maximum temperature [K], number of steps in temperature .
 
 NumberOfSteps       =   24000   #Maximum number of iterations to be done. 
                                 #The exit from the iteration loop is possible by two conditions 
@@ -74,7 +74,7 @@ StructureParameters={
                                                                                     # I have no idea what this means in terms of monolayer approach,
                                                                                     # if YOU know: add the comment or smth.
                                                                                     
-            "MaterialExtraField":           (0,         0,          0,          ),  # additional field [T] that may be applied 
+            "MaterialExtraField":           (0.1,      0,          0,          ),  # additional field [T] that may be applied 
                                                                                     # to the selected layer of the material, 
                                                                                     # designed specifically to simulate the layer with the exchange bias.
                                                                                     

@@ -1,4 +1,4 @@
-FolderName          =   "Demo-profiles" #name of the subfolder to dump profiles of the magnetization of the system
+FolderName          =   "Demo-profiles" #Name of the subfolder to dump profiles of the magnetization of the system
                                         # at each point of field and temperature
                                         
 Hmin,Hmax,Hsteps    =   0,      1,      2 #Minimum field [T], maximum field [T], number of steps in filed.
@@ -10,6 +10,8 @@ Tmin,Tmax,Tsteps    =   10,     300,    2 #Minimum temperature [K], maximum temp
 NumberOfSteps       =   24000   #Maximum number of iterations to be done. 
                                 #The exit from the iteration loop is possible by two conditions 
                                 # – either dM<1e-7 AND dFi<1e-6 are met or the maximum number of iterations is reached
+                                # if abovementioned conditions for dM and dFi are met immediately at start of the simulation,
+                                # additional 21 iterations will be done just  in case.
 
 Acceleration        =   1.5     #During the gradient descent, the angle of the magnetization of one monolayer
                                 # is changed not on dFi as calculated by the method, but on dFi*Acceleration. 
@@ -28,13 +30,19 @@ ReusePreviousResults=   False   #Reuse the previously calculated data.
                                 # If no previous solution found the system will be initialized in the state 
                                 # defined in StructureParameters section.
                                 #I strongly recommend to not reuse the previous solution and set ReusePreviousResults to False, as 
-                                # the end result may vary from case to case. 
+                                # the end result may vary from case to case and this function need to be extra validated. 
                                 # If used, extra verification is required to ensure that the solution is correct*
                                 #*correct - on its way and close to the global minima of the energy of the system. 
                                 
 #the structural parameters of the system to be simulated
 StructureParameters={
             "MaterialThickness":            (0.3,       1.2,        0.3,        ),  #thickness of the layer of magnetic material [nm]
+                                                                                    #The minimal thickness of the layer is 2 monolayers.
+                                                                                    #Layer of magnetic material with single monolayer
+                                                                                    # thickness may be initialized though. It will lead to
+                                                                                    # the case when the nearest and next-nearest monolayers
+                                                                                    # are different materials.
+                                                                                    # I have no  idea what will happen then... 
             
             "MLThickness":                  (0.15,      0.15,       0.15,       ),  #thickness of the atomic monolayer [nm]. For BCC iron it is 0.15 nm 
             
@@ -44,7 +52,7 @@ StructureParameters={
                                                                                     # as: Heff=ZeemanThickness*Hzeeman+Hexchange. 
                                                                                     # The value of ZeemanThickness different from 1.0 
                                                                                     # MUST ONLY be used in the case of strong ferromagnetic layer 
-                                                                                    # far from its Curie temperature. 
+                                                                                    # at temperature far below its Curie temperature. 
                                                                                     # The logic behind this coefficient is next: 
                                                                                     # as there will not be any behavioral features inside 
                                                                                     # the strong ferromagnetic layer, we can not simulate 
@@ -65,9 +73,11 @@ StructureParameters={
                                                                                     #in the Brillouin function. 
                                                                                     # I have no idea what this means in terms of monolayer approach,
                                                                                     # if YOU know: add the comment or smth.
+                                                                                    
             "MaterialExtraField":           (0,         0,          0,          ),  # additional field [T] that may be applied 
-                                                                                    # specifically to the selected layer of the material, 
+                                                                                    # to the selected layer of the material, 
                                                                                     # designed specifically to simulate the layer with the exchange bias.
+                                                                                    
             "MaterialExtraFieldDirection":  (0,         0,          0,          ),  # The direction of the additional magnetic field [deg].
             
             "MaterialSaturationM":          (1700.0,    778.5,      1700.0,     ),  #Saturation magnetisation of the material of each layer [emu/cm3]
@@ -92,39 +102,40 @@ StructureParameters={
                                                                                     # The properly guessed position may accelerate the solution a bit.
             
             "InitB":                        (0.75,      0.74,       0.75,       ),  #initial value of the Brillouin function, 
-                                                                                    #it seems that it does not effect the solution
+                                                                                    #it seems that it does not effect the solution much
                                                                                     # and does not change the convergence speed.
                                                                                     
             "LongRangeInteractionLength":   (0.15,      0.45,       0.15,       ),  #The length of the involvement of the monolayers 
                                                                                     # inside the layer into the interlayer exchange interaction. 
                                                                                     # The profile of the penetration is e^(-z/l) where z is 
-                                                                                    # z is the coordinate and l is the LongRangeInteractionLength
+                                                                                    # the coordinate and l is the LongRangeInteractionLength
                                                                                     #It is possible to see the sparce matrix of the
                                                                                     # long range exchange interaction using the
                                                                                     # Moth-exchange-profile.py script
             
             "LongRangeExchangeFlag":         False,     # This flag indicates if the interlayer exchange interaction will be calculated
-                                                        # as a "regular" of "short range" exchange with 1-st ad 2-nd neighbouring layers, or
-                                                        # as "some amount of edge monolayers in layer 1" 
+                                                        # as a "regular"/"direct/"short range" exchange with 1-st ad 2-nd neighbouring layers, or
+                                                        # as "some amount of edge monolayers in layer 1" have exchange interaction
                                                         # with "some amount of edge monolayers in layer 2"
                                                         # with exponentially decaying exchange constants between them.
-                                                        # If set to False the parameter  LongRangeInteractionLength is not used
+                                                        # If set to False the parameter  LongRangeInteractionLength is ignored.
             
             "InitPositionSingle":            10,        # legacy, not used anymore. It was the same as InitPosition, but for the same angle for all layers
             
-            "PeriodicBoundaryConditions":    False      # If True, thenperiodic boundary conditions are used.
-                                                        # This option is need to be tested, as I didn't check if it works properly
+            "PeriodicBoundaryConditions":    False      # If True, then periodic boundary conditions are used.
+                                                        # This option is need to be tested, as I didn't check if it works properly.
             }
 # direct exchange pairvise interaction constants
 MaterialExchange={
             "FeCr-FeCr"     :0.03,
             "FeCr-Fe"       :-0.002,
             "Fe-Fe"         :0.3,
-            "Fe-FeCr"       :-0.002 #<---- NO COMA AT THE END
+            "Fe-FeCr"       :-0.002 #<---- please observe, no coma after last element of dictionary
             }       # Pairvise exchange between te materials. The value of the exchange constant from material A to material B must be equal 
-                    # to the value of the exchange constant from material B to material A. 
+                    # to the value of the exchange constant from material B to material A! 
                     # For any pairvise exchange between material A and B, the notation must strictly follow to the next pattern: "A-B"
-                    # The value of the exchange constant from material A to material A indicates the internal exchange of the material.
+                    # The value of the exchange constant from material A to material A indicates the internal exchange of the material,
+                    # and basically defines its Curie temperature.
                     # The vavue of the exchange constant from material A to material B indicated the interlayer exchange
                     # The internal exchange of the material is ALWAYS calculated as a direct/short range exchange!
                     # to find the value of the exchange inside the material do next:
@@ -133,9 +144,9 @@ MaterialExchange={
                     #   3. Find or agree to some value of the magnetization of the material
                     #   4. Set initial value of the material exchange constant
                     #   5. Simulate the MvsT dependence and find the Curie temperature from this data
-                    #   6. change the exchange constant, depending on how different the obtained Curie temperature from expected one
-                    #   7. repeat from 5. untill Tc obtained from the simulations coinside with the expected one.
-                    #   8. Cheer up yourself with a nice cup of tea!
+                    #   6. Change the exchange constant, depending on how different the obtained Curie temperature from expected one
+                    #   7. Repeat from 5. untill Tc obtained from the simulations coinside with the expected one.
+                    #   8. Cheer up yourself with a nice cup of tea with milk!
 
 LongRangeExchange={
             "FeCr1-FeCr2"  :-0.0014,
@@ -150,3 +161,13 @@ LongRangeExchange={
                     # No meter how big the LongRangeInteractionLength parameter is, the long range exchange will be always limited to the thickness 
                     # of the nearest layer*.
                     # * play with the structural parameters and check the sparse matrix, you will get it. 
+        
+        #----------------!!!! CAUTION !!!!---------------------
+        # Be carefull when you are defining the long range exchange. 
+        # The long range exchange and the short range exchange will be calculated simultaneously. Thus if you want to simulate only a long-range interaction,
+        # then the short range exchange constants must be set to 0.0
+         
+        
+        
+        # The program is in early stge of development, thus no reliable fool-proof mechanism is implemented regarding the analysis of input parameters.
+        # Thus in is beter to leave all variables defined in the config file, even if they are not used in the analysis.

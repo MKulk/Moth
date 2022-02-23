@@ -1,8 +1,13 @@
-FolderName          =   "SAF-1-3-1-direct"
+FolderName          =   "Fe40Cr60-type2-short"
 Hmin,Hmax,Hsteps    =   0.001,      0.5,      64
 Tmin,Tmax,Tsteps    =   284,      291,    32
 NumberOfSteps       =   24000
 FieldDirection      =   0
+Acceleration        =   1.5
+DeleteFlag          =   True
+ReusePreviousResults=   False
+
+#Fe40Cr60
 StructureParameters={
             "MaterialThickness":            (0.3,       1.2,        1.2,        0.3,        1.2,        1.2,        0.3,        ),
             "MLThickness":                  (0.15,      0.15,       0.15,       0.15,       0.15,       0.15,       0.15,       ),
@@ -11,7 +16,7 @@ StructureParameters={
             "MaterialS":                    (1,         1,          1,          1,          1,          1,          1,          ),
             "MaterialExtraField":           (0,         0,          0,          0,          0,          0,          0,          ),
             "MaterialExtraFieldDirection":  (0,         0,          0,          0,          0,          0,          0,          ),
-            "MaterialSaturationM":          (1557.0,    778.5,      778.5,      1557.0,     778.5,      778.5,      1557.0,     ),
+            "MaterialSaturationM":          (1700.0,    680.0,      680.0,      1700.0,     680.0,      680.0,      1700.0,     ),
             "CurieTemperature":             (0,         0,          0,          0,          0,          0,          0,          ),
             "GammaCoefficient":             (0.86,      0.86,       0.86,       0.86,       0.86,       0.86,       0.86,       ),
             "InitPosition":                 (80.0,      -80.0,      80.0,       -80.0,      80.0,       -80.0,      80.0,       ),
@@ -22,22 +27,22 @@ StructureParameters={
             "PeriodicBoundaryConditions":    False
             }
 MaterialExchange={
-            "FeCr1-FeCr1"   :0.029,
-            "FeCr1-FeCr2"   :-0.0014*3.5,
-            "FeCr1-Fe"      :-0.002*3.5,
-            "FeCr2-FeCr2"   :0.029,
-            "FeCr2-FeCr1"   :-0.0014*3.5,
-            "FeCr2-Fe"      :-0.002*3.5,
-            "Fe-Fe"         :0.300,
-            "Fe-FeCr1"      :-0.002*3.5,
-            "Fe-FeCr2"      :-0.002*3.5
+            "FeCr1-FeCr1"   :0.04,
+            "FeCr1-FeCr2"   :-0.0008,
+            "FeCr1-Fe"      :-0.1,
+            "FeCr2-FeCr2"   :0.04,
+            "FeCr2-FeCr1"   :-0.0008,
+            "FeCr2-Fe"      :-0.1,
+            "Fe-Fe"         :0.3,
+            "Fe-FeCr1"      :-0.1,
+            "Fe-FeCr2"      :-0.1
             }
 
 LongRangeExchange={
-            "FeCr1-FeCr2"  :-0.0014,
-            "FeCr1-Fe"     :-0.002,
-            "FeCr2-FeCr1"  :-0.0014,
-            "FeCr2-Fe"     :-0.002,
-            "Fe-FeCr1"     :-0.002,
-            "Fe-FeCr2"     :-0.002
+            "FeCr1-FeCr2"  :-0.0001,
+            "FeCr1-Fe"     :-0.025,
+            "FeCr2-FeCr1"  :-0.0001,
+            "FeCr2-Fe"     :-0.025,
+            "Fe-FeCr1"     :-0.025,
+            "Fe-FeCr2"     :-0.0225
             }#not used here

@@ -1,4 +1,12 @@
-SAFParameters={
+FolderName          =   "SAF-optimization-F-f-FF-f-F-3"
+Hmin,Hmax,Hsteps    =   0,      1.0,      32
+Tmin,Tmax,Tsteps    =   290,      310,    15
+NumberOfSteps       =   24000
+FieldDirection      =   0
+Acceleration        =   1.5
+DeleteFlag          =   True
+ReusePreviousResults=   False
+StructureParameters={
             "MaterialThickness":            (0.60,    1.2,        1.2,        1.2,        0.60,   ),
             "MLThickness":                  (0.15,    0.15,       0.15,       0.15,       0.15,   ),
             "ZeemanThickness":              (1.0,     1.0,        1.0,        1.0,        1.0,    ),
@@ -27,48 +35,10 @@ MaterialExchange={
             "Fe2-FeCr"  :0.000,
             "Fe2-Fe1"   :0.000
             }
-#Tc=300K gamma=0.045
-RKKYExchange={
+
+LongRangeExchange={
             "Fe1-FeCr"  :-0.0006,
             "FeCr-Fe1"  :-0.0006,
             "Fe2-FeCr"  :0.0006,
             "FeCr-Fe2"  :0.0006
             }
-
-
-
-from CalculationClass import simulation, timeit
-from viewer import reader
-
-@timeit
-def f(PathToFolder,StructureParameters,StructureExchange,LongRangeExchange):
-    Hmin=0.001
-    Hmax=1.0
-    Hsteps=32
-    Tmin=300.9
-    Tmax=300.9
-    Tsteps=1
-    S=simulation(DeleteFlag=True,
-                 DescendingCoefficient=2,
-                 PathToFolder=PathToFolder,
-                 StructureParameters=StructureParameters,
-                 StructureExchange=StructureExchange,
-                 LongRangeExchange=LongRangeExchange,
-                 NumberOfIterationM=50,
-                 NumberOfIterationTheta=1,
-                 NumberOfSteps=1200)
-    S.mode(Debug=False)
-    file=S.GetMHvsT(
-                    Hmin=Hmin,
-                    Hmax=Hmax,
-                    Hsteps=Hsteps,
-                    Tmin=Tmin,
-                    Tmax=Tmax,
-                    Tsteps=Tsteps,
-                    FieldDirection=0)
-    data=reader(file)
-    data.GetMHonT()
-    data.GetMTonH()
-
-#Long range exchange length=0.45
-f(PathToFolder="F-f-F AF-RKKY H=0-1 Test",StructureParameters=SAFParameters,StructureExchange=MaterialExchange,LongRangeExchange=RKKYExchange)

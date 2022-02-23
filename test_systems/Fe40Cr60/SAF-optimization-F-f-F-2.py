@@ -1,4 +1,4 @@
-FolderName          =   "SAF-opt-F-f-F-direct-2%"
+FolderName          =   "SAF-opt-F-f-F-direct-4%"
 Hmin,Hmax,Hsteps    =   0,      1,      32
 Tmin,Tmax,Tsteps    =   290,      310,    15
 NumberOfSteps       =   24000
@@ -26,13 +26,13 @@ StructureParameters={
             }
 MaterialExchange={
             "FeCr-FeCr" :0.045,
-            "FeCr-Fe1"  :0.0003114,#2%
+            "FeCr-Fe1"  :0.0006,#2%
             "Fe1-Fe1"   :0.09,
-            "Fe1-FeCr"  :0.0003114
+            "Fe1-FeCr"  :0.0006
             }
 
 LongRangeExchange={
             "Fe1-FeCr"  :-0.0006,
             "FeCr-Fe1"  :-0.0006
-            }
+            }#not used
 

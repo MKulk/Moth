@@ -290,7 +290,7 @@ class multilayer:
             if i>20 and np.all(np.abs(dtheta)<Tprecision) and np.all(np.abs(dB)<Bprecision):
                 s1="Exit by precision for: "
                 s2="T="+str(self.Temperature)
-                s3=" H="+str(self.Field)
+                s3=" H="+str(self.Field*np.sign(np.cos(self.FieldDirection)))
                 s4=" after {} iterations".format(str(i))
                 print(colored(s1, 'blue'), colored(s2, 'red'),colored(s3, 'red'),colored(s4,'blue'))
                 printFlag=False

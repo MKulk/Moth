@@ -4,8 +4,6 @@ from termcolor import colored
 import math
 
 
-
-
 class multilayer:
     def __init__(self,MaterialParameters,MaterialExchange,LongRangeExchange="none",Temperature=1,Field=1,FieldDirection=0, Acceleration=1.5):
         self.Acceleration= Acceleration

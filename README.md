@@ -1,15 +1,20 @@
 # Moth
-This program is designed to simulate a magnetostatic behavior of the magnetization of the stack of thin films of magnetic material with exchange interaction between the layers. The approach of this method is next:
-- Each layer of the material is split into a number of monolayers, according to the thickness of the layer and the crystal structure of the material.
--Each monolayer is affected by the effective field, that consist of the contribution of the external magnetic field and exchange field
-- The exchange field, that acts on the monolayer, consists of the contributions of the exchange fields from the neighboring monolayers and the internal (intra-monolayer) exchange field.
-- An additional static field may be declared for a specific layer, the purpose of this field is to simulate the exchange bias effect. This field is also added to the total effective field of the monolayers, where it is active.
-- The magnetization of the monolayer is calculated using a self-consistent Brillouin function.
-- For the current solution, it is assumed that the system has strong easy-plane shape anisotropy, thus the direction of the magnetization of the monolayer may rotate only in the plane.
-- The direction of the magnetization of the monolayer is found by the minimization of the energy of the monolayer in a static environment with a gradient descending method.
+This program is designed to simulate magnetostatics in thin films and multilayers of magnetic materials at finite temperature. 
+
+When studying magnetic multilayers one is often interested only in the profile of the magnetization across the thickness of the system. However, in order to obtain nice data at finite temperatures from micromagnetics or atomistic spin dynamics, very large lateral dimensions may be required. This leads to long simulation times, especially close to the critical temperature where the system may still be too small to avoid superparamagnetic behaviour not seen in experiments. In Moth these problems are eliminated as each monolayer is represented by one magnetic moment of variable magnitude, and the temperature is taken into account using a Brillouin function instead of random fluctuations.
+
+Approach
+- Each film or layer in the system is split into monolayers, according to its thickness and the crystal structure of the material.
+- Each monolayer is subject to an effective field, which consists of contributions from the external magnetic field and the exchange field.
+- The exchange field acting on a monolayer consists of inter- and intralayer contributions, from neighbouring monolayers and from interatomic exchange within the monolayer itself.
+- Additional static and layer specific fields may be defined, with the purpose of simulating exchange bias effects. These fields are added to the total effective fields of the relevant monolayers.
+- The magnetization of the monolayers is calculated using a self-consistent Brillouin function.
+- In the current version it is assumed that the system has strong easy-plane shape anisotropy, thus the magnetization of the monolayers may rotate only in the plane.
+- The magnetization direction of a monolayer is found by the minimization of its energy in a static environment using a gradient descending method.
 - The exchange interaction between two layers may be calculated in two ways:
-- Short-range exchange. This method calculates the exchange field only from n-2, n-1, n, n+1, n+2
-- Long-range exchange. This method calculates the exchange of kind "all-to-all" where the amount of involved monolayers is defined by the exchange length parameter. The penetration profile of the weight coefficient of the interlayer exchange is defined by the law e^-z/l where z is the coordinate in nm and l is the penetration length. - - The simulations may be done at variable temperatures, both lower and higher than the Curie temperature of layers.
+  - Short-range exchange. In this mode the exchange interractions reach no further than the second nearest neighbour monolayer.
+  - Long-range exchange. In this mode there is no limit to the range of the exchange interractions. The interlayer exchange decays exponentially, J~exp(-z/l), with an exchange length parameter l set by the user.
+- The simulations may be done at variable temperatures, both lower and higher than the Curie temperature of the layers.
 
 
 To run the program, use the following command:

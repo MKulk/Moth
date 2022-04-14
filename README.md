@@ -13,5 +13,8 @@ This program is designed to simulate a magnetostatic behavior of the magnetizati
 
 
 To run the program, use the following command:
-python3 path-to-Moth/Moth.py path-to-config/config-name.py CPU
 
+```bash
+python3 path-to-Moth/Moth.py path-to-config/config-name.py CPU
+```
+the last argument "CPU" declares the processing target, available targets are: "CPU", "GPU". For now only "CPU" is working.
